@@ -1,4 +1,12 @@
-"use client";
+import re
+
+with open("app/page.tsx", "r") as f:
+    content = f.read()
+
+# We need to extract the top part of the file until the return statement
+# and add the missing constants and functions if they don't exist.
+
+prefix = """"use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -142,7 +150,7 @@ export default function LandingPage() {
         const res = await fetch(`${API_URL}/marketplace/listings`);
         if (!res.ok) throw new Error("Failed");
         const data = await res.json();
-        const available = data.filter((l: { is_available: boolean }) => l.is_available);
+        const available = data.filter((l: any) => l.is_available);
         setProducts(available);
       } catch (err) {
         console.warn("Using fallback listings on landing page");
@@ -153,9 +161,11 @@ export default function LandingPage() {
     };
     fetchListings();
   }, []);
+"""
 
+jsx_return = """
   return (
-  <div className="bg-slc-cloud text-slc-ink overflow-x-hidden transition-colors duration-300">
+  <div className="bg-[#F0F2F2] text-slc-ink overflow-x-hidden">
 
     {/* ══ HERO ══════════════════════════════════════════ */}
     <section className="gradient-hero relative min-h-[620px] flex items-center overflow-hidden">
@@ -184,7 +194,7 @@ export default function LandingPage() {
           </div>
 
           <h1 className="animate-fade-in-up stagger-2 text-5xl md:text-6xl font-extrabold text-white leading-[1.1] tracking-tight mb-4">
-            Returns don&apos;t<br />
+            Returns don't<br />
             have to be{' '}
             <span className="text-gradient">wasted.</span>
           </h1>
@@ -327,7 +337,7 @@ export default function LandingPage() {
               item: '👶 Baby Monitor',
               accentBorder: 'border-l-4 border-blue-400',
               accentBg: 'bg-blue-50',
-              problem: "Works perfectly. Won't list on classifieds — strangers, haggling, doorstep risk. Sitting in a drawer.",
+              problem: 'Works perfectly. Won\'t list on classifieds — strangers, haggling, doorstep risk. Sitting in a drawer.',
               badgeOld: { color: 'bg-blue-100 text-blue-700', text: '⏸ Old: Gathering dust in drawer' },
               win: '✅ Listed on SecondLife → 3 verified nearby parents notified → Sold safely → +150 💚',
               winBg: 'bg-slc-leaf-light border border-slc-leaf/30'
@@ -337,7 +347,7 @@ export default function LandingPage() {
               item: '📦 200 returns/month',
               accentBorder: 'border-l-4 border-purple-400',
               accentBg: 'bg-purple-50',
-              problem: "All marked 'didn't match'. All fine. Manually inspects, guesses price, re-photographs on phone.",
+              problem: 'All marked \'didn\'t match\'. All fine. Manually inspects, guesses price, re-photographs on phone.',
               badgeOld: { color: 'bg-purple-100 text-purple-700', text: '😓 Old: 40 hrs/month manual work' },
               win: '✅ AI bulk-grades all 200 → Auto-priced → Auto-listed → ₹1.4L recovered this month',
               winBg: 'bg-slc-leaf-light border border-slc-leaf/30'
@@ -356,7 +366,7 @@ export default function LandingPage() {
                     <p className="text-slc-steel text-xs">{story.item}</p>
                   </div>
                 </div>
-                <p className="text-slc-steel text-sm italic leading-relaxed">&quot;{story.problem}&quot;</p>
+                <p className="text-slc-steel text-sm italic leading-relaxed">"{story.problem}"</p>
                 <span className={`inline-block mt-4 text-xs font-bold px-3 py-1.5 rounded-full ${story.badgeOld.color}`}>
                   {story.badgeOld.text}
                 </span>
@@ -419,32 +429,117 @@ export default function LandingPage() {
         {/* Product grid */}
         {!loading && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {filteredProducts.map((listing: any, idx) => {
-              const productShape = {
-                id: listing.product_id || listing.id,
-                listing_id: listing.id,
-                name: listing.product?.name || listing.product_name || listing.name,
-                category: listing.product?.category || listing.category,
-                image_url: listing.product?.image_url || listing.image_url,
-                asking_price: listing.asking_price || listing.price,
-                condition_label: listing.condition_label,
-                ai_grade: listing.ai_grade,
-                description: listing.description,
-                return_rate: listing.return_rate || 0,
-                price: listing.price || listing.original_price || listing.asking_price,
-                refurb_price: listing.refurb_price || listing.asking_price
-              };
-              
+            {filteredProducts.map((product, idx) => {
+              const risk = getRiskLevel(product.return_rate || 0);
+              const imageUrl = (product.image_url && !product.image_url.includes('placeholder'))
+                ? product.image_url
+                : PLACEHOLDER_IMAGES[product.category] || PLACEHOLDER_IMAGES.electronics;
+              const isAmazonChoice = product.id === '1' || idx === 0;
+
               return (
-                <div key={listing.id} className="relative group">
+                <div
+                  key={product.id}
+                  onClick={() => router.push(`/product/${product.id}`)}
+                  className="product-card-enhanced group relative bg-white rounded-2xl border border-slc-divider overflow-hidden cursor-pointer"
+                >
                   {/* Left accent on hover */}
-                  <div className="absolute -inset-0.5 bg-gradient-to-b from-slc-leaf to-slc-leaf-dark opacity-0 group-hover:opacity-100 transition-opacity z-0 rounded-2xl blur-sm" />
-                  <div className="relative z-10 h-full">
-                    <ProductCard
-                      product={productShape}
-                      isMarketplace={true}
-                      onClick={() => router.push(`/marketplace/${listing.id}`)}
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-slc-leaf to-slc-leaf-dark opacity-0 group-hover:opacity-100 transition-opacity z-10 rounded-l-2xl" />
+
+                  {/* Image */}
+                  <div className="relative aspect-[4/3] overflow-hidden bg-slc-smoke">
+                    <img
+                      src={imageUrl}
+                      alt={product.name}
+                      className="card-image w-full h-full object-cover transition-transform duration-500"
                     />
+                    {/* Amazon's Choice badge */}
+                    {isAmazonChoice && (
+                      <div className="absolute top-3 left-3 bg-slc-sky text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-sm">
+                        Amazon's Choice ♻️
+                      </div>
+                    )}
+                    {/* Risk dot */}
+                    <div className={`absolute top-3 right-3 w-3 h-3 rounded-full border-2 border-white shadow ${
+                      (product.return_rate || 0) > 20 ? 'bg-slc-red' :
+                      (product.return_rate || 0) > 10 ? 'bg-slc-amber' : 'bg-slc-leaf'
+                    }`} />
+
+                    {/* Overlay on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slc-ink/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                      <span className="text-white text-sm font-bold">View Details →</span>
+                    </div>
+                  </div>
+
+                  {/* Body */}
+                  <div className="p-5">
+                    <span className="text-[10px] text-slc-steel uppercase tracking-widest font-bold">
+                      {capitalizeCategory(product.category)}
+                      {product.refurb_available ? ' • Refurb Available' : ''}
+                    </span>
+                    <h3 className="text-base font-bold text-slc-ink leading-snug line-clamp-2 mt-1 mb-3 min-h-[44px]">
+                      {product.name}
+                    </h3>
+
+                    {/* Price */}
+                    <div className="flex items-baseline gap-2 mb-3">
+                      {product.refurb_price ? (
+                        <>
+                          <span className="text-slc-steel text-sm line-through">{formatPrice(product.price || 0)}</span>
+                          <span className="text-xl font-black text-slc-red font-mono">{formatPrice(product.refurb_price)}</span>
+                        </>
+                      ) : (
+                        <span className="text-xl font-black text-slc-ink font-mono">{formatPrice(product.price || 0)}</span>
+                      )}
+                    </div>
+
+                    {/* Stars */}
+                    <div className="flex items-center gap-1 mb-4">
+                      <span className="text-slc-amber text-sm">★★★★☆</span>
+                      <span className="text-slc-ink text-sm font-bold ml-1">4.2</span>
+                      <span className="text-slc-steel text-xs">(438)</span>
+                    </div>
+
+                    {/* Life Path */}
+                    <div className="border-t border-slc-divider pt-3 mb-3">
+                      <div className="flex items-center justify-between px-1">
+                        {[
+                          { icon: '📦', label: 'Return', bg: 'bg-gray-100' },
+                          null,
+                          { icon: '🤖', label: 'Grade', bg: 'bg-slc-amber-light' },
+                          null,
+                          { icon: '✅', label: 'Route', bg: 'bg-blue-50' },
+                          null,
+                          { icon: '💚', label: 'Earn', bg: 'bg-slc-leaf-light' },
+                        ].map((step, i) => step === null ? (
+                          <div key={i} className="flex-1 h-px bg-gradient-to-r from-slc-divider to-slc-leaf/30 mx-1" />
+                        ) : (
+                          <div key={i} className="flex flex-col items-center gap-1">
+                            <div className={`w-7 h-7 rounded-full ${step.bg} flex items-center justify-center text-sm`}>
+                              {step.icon}
+                            </div>
+                            <span className="text-[9px] font-bold text-slc-steel uppercase tracking-wide">
+                              {step.label}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* CTA row */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); router.push(`/product/${product.id}`); }}
+                        className="flex-1 bg-slc-amber hover:bg-yellow-500 text-slc-ink text-sm font-bold py-2.5 rounded-lg transition-colors"
+                      >
+                        View Item
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); router.push(`/return/${product.id}`); }}
+                        className="flex-1 bg-slc-leaf hover:bg-slc-leaf-dark text-white text-sm font-bold py-2.5 rounded-lg transition-colors"
+                      >
+                        Quick Return
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -562,3 +657,8 @@ export default function LandingPage() {
   </div>
 );
 }
+"""
+
+with open("app/page.tsx", "w") as f:
+    f.write(prefix + jsx_return)
+

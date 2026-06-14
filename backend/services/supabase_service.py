@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+# pyrefly: ignore [missing-import]
 from supabase import create_client, Client
 
 load_dotenv()
@@ -15,8 +16,8 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def get_user(user_id: str) -> dict:
     try:
-        response = supabase.schema("public").table("users").select("*").eq("id", user_id).single().execute()
-        return response.data
+        response = supabase.schema("public").table("users").select("*").eq("id", user_id).execute()
+        return response.data[0] if response.data else None
     except Exception as e:
         raise Exception(f"Failed to get user {user_id}: {str(e)}")
 
@@ -32,7 +33,7 @@ def update_user_credits(user_id: str, credits_to_add: int, co2_to_add: float) ->
             .eq("id", user_id)
             .execute()
         )
-        return response.data[0]
+        return response.data[0] if response.data else None
     except Exception as e:
         raise Exception(f"Failed to update credits for user {user_id}: {str(e)}")
 
@@ -40,7 +41,7 @@ def update_user_credits(user_id: str, credits_to_add: int, co2_to_add: float) ->
 def create_listing(listing_data: dict) -> dict:
     try:
         response = supabase.schema("public").table("listings").insert(listing_data).execute()
-        return response.data[0]
+        return response.data[0] if response.data else None
     except Exception as e:
         raise Exception(f"Failed to create listing: {str(e)}")
 
@@ -58,8 +59,8 @@ def get_listings(category: str = None, status: str = "available") -> list:
 
 def get_listing(listing_id: str) -> dict:
     try:
-        response = supabase.schema("public").table("listings").select("*").eq("id", listing_id).single().execute()
-        return response.data
+        response = supabase.schema("public").table("listings").select("*").eq("id", listing_id).execute()
+        return response.data[0] if response.data else None
     except Exception as e:
         raise Exception(f"Failed to get listing {listing_id}: {str(e)}")
 
@@ -72,15 +73,15 @@ def update_listing_status(listing_id: str, status: str) -> dict:
             .eq("id", listing_id)
             .execute()
         )
-        return response.data[0]
+        return response.data[0] if response.data else None
     except Exception as e:
         raise Exception(f"Failed to update listing {listing_id} status: {str(e)}")
 
 
 def get_product(product_id: str) -> dict:
     try:
-        response = supabase.schema("public").table("products").select("*").eq("id", product_id).single().execute()
-        return response.data
+        response = supabase.schema("public").table("products").select("*").eq("id", product_id).execute()
+        return response.data[0] if response.data else None
     except Exception as e:
         raise Exception(f"Failed to get product {product_id}: {str(e)}")
 
@@ -96,7 +97,7 @@ def get_all_products() -> list:
 def add_transaction(transaction_data: dict) -> dict:
     try:
         response = supabase.schema("public").table("transactions").insert(transaction_data).execute()
-        return response.data[0]
+        return response.data[0] if response.data else None
     except Exception as e:
         raise Exception(f"Failed to add transaction: {str(e)}")
 

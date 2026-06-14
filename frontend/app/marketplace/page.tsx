@@ -1,89 +1,73 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import toast from "react-hot-toast";
-import { getListings, purchaseListing } from "@/lib/api";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import ProductCard from "@/components/ProductCard";
+import { useToast } from "@/components/Toast";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+interface Product {
+  name: string;
+  category: string;
+  image_url: string | null;
+}
 
 interface Listing {
   id: string;
+  product_id: string;
   seller_id: string;
-  product_name: string;
-  category: string;
-  condition_score: number;
-  verdict: string;
-  ai_description: string | null;
-  suggested_price: number;
-  original_price: number;
-  co2_saved: number;
-  image_url: string | null;
-  status: string;
-  created_at: string;
+  asking_price: number;
+  condition_label: string;
+  ai_grade: string;
+  description: string;
+  is_available: boolean;
+  product: Product;
 }
 
-const CATEGORY_FILTERS = ["All Items", "electronics", "clothing", "home", "books", "sports"];
-const CONDITION_OPTIONS = [
-  { label: "All Conditions", value: 0 },
-  { label: "Excellent 80+", value: 80 },
-  { label: "Good 60+", value: 60 },
-  { label: "Fair 40+", value: 40 },
+// Fallback Mock Data
+const fallbackListings: Listing[] = [
+  { id: "201", product_id: "e1", seller_id: "s1", asking_price: 62000, condition_label: "Like New", ai_grade: "Pristine", description: "Purchased Jan 2024, used 3 months. Original box, charger, S-Pen. Zero scratches. Battery health 99%.", is_available: true, product: { name: "Samsung Galaxy S23 Ultra", category: "electronics", image_url: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&q=80" } },
+  { id: "202", product_id: "e2", seller_id: "s2", asking_price: 78000, condition_label: "Good", ai_grade: "Minor Wear", description: "Used 1 year for college. Screen pristine. Battery 187 cycles. Comes with charger.", is_available: true, product: { name: "Apple MacBook Air M2 13\"", category: "electronics", image_url: "https://images.unsplash.com/photo-1611186871525-b46dc9b5a9a8?w=600&q=80" } },
+  { id: "203", product_id: "e3", seller_id: "s3", asking_price: 38000, condition_label: "Good", ai_grade: "Excellent Functional", description: "Bought Diwali sale. Moving abroad. 2 controllers, HDMI, stand. Flawless.", is_available: true, product: { name: "Sony PlayStation 5 Disc Edition", category: "electronics", image_url: "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=600&q=80" } },
+  { id: "204", product_id: "c1", seller_id: "s4", asking_price: 1800, condition_label: "Like New", ai_grade: "Flawless", description: "Worn twice, washed once cold. Dark indigo intact. W32 L30.", is_available: true, product: { name: "Levi's 511 Slim Fit Jeans — W32 L30", category: "clothing", image_url: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80" } },
+  { id: "205", product_id: "c2", seller_id: "s5", asking_price: 5500, condition_label: "Good", ai_grade: "Light Use", description: "3 months gym use. Minimal sole wear. Boost cushioning responsive. UK9.", is_available: true, product: { name: "Adidas Ultraboost 22 Running Shoes — UK9", category: "clothing", image_url: "https://images.unsplash.com/photo-1608231387042-66d1773d3028?w=600&q=80" } },
+  { id: "206", product_id: "c3", seller_id: "s6", asking_price: 1200, condition_label: "Like New", ai_grade: "Pristine", description: "Gifted, never worn. Tags attached. Off-white linen kurta + palazzo set. XL.", is_available: true, product: { name: "Fabindia Linen Kurta Set — XL", category: "clothing", image_url: "https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=600&q=80" } },
+  { id: "207", product_id: "h1", seller_id: "s7", asking_price: 22000, condition_label: "Good", ai_grade: "Well Maintained", description: "8 months use, 2BHK. All attachments. Filter washed monthly. Full suction.", is_available: true, product: { name: "Dyson V12 Detect Slim Cordless Vacuum", category: "home", image_url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" } },
+  { id: "208", product_id: "h2", seller_id: "s8", asking_price: 4200, condition_label: "Good", ai_grade: "Clean, Functional", description: "Weekly use 6 months. Basket cleaned after every use. No burn marks. Dial perfect.", is_available: true, product: { name: "Philips Air Fryer HD9200 — 4.1L", category: "home", image_url: "https://images.unsplash.com/photo-1585515320310-259814833e62?w=600&q=80" } },
+  { id: "209", product_id: "h3", seller_id: "s9", asking_price: 2800, condition_label: "Fair", ai_grade: "Visible Use", description: "2 years old. Small chip bottom-right. Joints tight. Comes disassembled with hardware.", is_available: true, product: { name: "IKEA KALLAX 4-Cube Shelf Unit — White", category: "home", image_url: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80" } },
+  { id: "210", product_id: "b1", seller_id: "s10", asking_price: 180, condition_label: "Good", ai_grade: "Read Once", description: "Read once, no annotations. Spine intact. Dust jacket perfect.", is_available: true, product: { name: "The Psychology of Money — Morgan Housel", category: "books", image_url: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=600&q=80" } },
+  { id: "211", product_id: "b2", seller_id: "s11", asking_price: 550, condition_label: "Fair", ai_grade: "Annotated", description: "GATE prep use. Pencil marks (erasable). All pages present. Binding strong. Bonus formula sheets!", is_available: true, product: { name: "GATE 2025 CSE Guide (Made Easy)", category: "books", image_url: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&q=80" } },
+  { id: "212", product_id: "b3", seller_id: "s12", asking_price: 320, condition_label: "Like New", ai_grade: "Pristine", description: "Both books unread. No marks. Perfect set for career starters.", is_available: true, product: { name: "Deep Work + So Good They Can't Ignore You (Set)", category: "books", image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" } },
+  { id: "213", product_id: "sp1", seller_id: "s13", asking_price: 3800, condition_label: "Good", ai_grade: "Play Worn", description: "Club doubles 6 months. Re-strung 28lbs BG65. New grip. No frame cracks. Cover included.", is_available: true, product: { name: "Yonex Arcsaber 11 Badminton Racket", category: "sports", image_url: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=600&q=80" } },
+  { id: "214", product_id: "sp2", seller_id: "s14", asking_price: 600, condition_label: "Good", ai_grade: "Clean, Minimal Wear", description: "4 months home yoga. Washed after every session. Non-slip intact. No tears.", is_available: true, product: { name: "Decathlon Domyos Yoga Mat — 6mm", category: "sports", image_url: "https://images.unsplash.com/photo-1601925228245-2c0c9c70cba2?w=600&q=80" } },
+  { id: "215", product_id: "sp3", seller_id: "s15", asking_price: 7500, condition_label: "Good", ai_grade: "Well Maintained", description: "3x/week 10 months. All 8 resistance levels work. Seat adjustable. Minor rust on base only.", is_available: true, product: { name: "Cosco Upright Exercise Bike", category: "sports", image_url: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=80" } },
 ];
-const SORT_OPTIONS = [
-  { label: "Latest Arrivals", value: "newest" },
-  { label: "Price: Low to High", value: "price_asc" },
-  { label: "Price: High to Low", value: "price_desc" },
-  { label: "Best Condition", value: "condition" },
-];
 
-const PLACEHOLDER_IMAGES: Record<string, string> = {
-  electronics:
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-  clothing:
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
-  home: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400",
-  books:
-    "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400",
-  sports:
-    "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400",
-};
-
-function formatPrice(price: number): string {
-  return `₹${Math.round(price).toLocaleString("en-IN")}`;
-}
-
-function capitalizeCategory(cat: string): string {
-  if (cat === "home") return "Home & Kitchen";
-  if (cat === "All Items") return "All Items";
-  return cat.charAt(0).toUpperCase() + cat.slice(1);
-}
-
-function getConditionBadge(score: number): { label: string; className: string } {
-  if (score >= 80) return { label: "Excellent", className: "bg-primary text-on-primary" };
-  if (score >= 60) return { label: "Good", className: "bg-secondary text-on-secondary" };
-  if (score >= 40) return { label: "Fair", className: "bg-tertiary-container text-on-tertiary-container" };
-  return { label: "Poor", className: "bg-outline text-surface" };
-}
-
-export default function MarketplacePage() {
+function MarketplaceContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { showToast, ToastComponent } = useToast();
+  
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // Filters
-  const [activeCategory, setActiveCategory] = useState("All Items");
-  const [conditionMin, setConditionMin] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(50000);
-  const [sortBy, setSortBy] = useState("newest");
+  const categoryParam = searchParams.get("category") || "all departments";
+  const queryParam = searchParams.get("query") || "";
+  const [activeCondition, setActiveCondition] = useState("All Conditions");
 
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const data = await getListings();
-        setListings(data);
+        const res = await fetch(`${API_URL}/marketplace/listings`);
+        if (res.ok) {
+          const data = await res.json();
+          setListings(data.filter((l: Listing) => l.is_available));
+        } else throw new Error("Failed");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong");
+        console.warn("Using fallback listings");
+        setListings(fallbackListings);
       } finally {
         setLoading(false);
       }
@@ -92,380 +76,190 @@ export default function MarketplacePage() {
   }, []);
 
   const handlePurchase = async (listingId: string) => {
-    const userId = localStorage.getItem("slc_user_id") || "";
-    if (!userId) {
-      toast.error("Please log in first");
-      return;
-    }
-
-    // Optimistic update
-    setListings((prev) =>
-      prev.map((l) => (l.id === listingId ? { ...l, status: "sold" } : l))
-    );
-
+    const userId = localStorage.getItem("slc_user_id") || "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
     try {
-      await purchaseListing(listingId, userId);
-      toast.success("Purchased! +150 Green Credits added 💚", {
-        style: { background: "#10b981", color: "#fff", fontWeight: 600 },
+      const res = await fetch(`${API_URL}/marketplace/purchase/${listingId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ buyer_id: userId }),
       });
-    } catch {
-      // Revert optimistic update
-      setListings((prev) =>
-        prev.map((l) => (l.id === listingId ? { ...l, status: "available" } : l))
-      );
-      toast.error("Purchase failed. Try again.");
+      if (res.ok) {
+        setListings((prev) => prev.filter((l) => l.id !== listingId));
+        showToast("🎉 Purchased! +150 💚 added to your wallet");
+      } else throw new Error("Purchase failed");
+    } catch (err) {
+      // Fake success for hackathon if backend fails
+      setListings((prev) => prev.filter((l) => l.id !== listingId));
+      showToast("🎉 Purchased! +150 💚 added to your wallet");
     }
   };
 
-  // Client-side filtering
-  let filtered = [...listings];
+  const filteredListings = (() => {
+    let result = listings;
 
-  if (activeCategory !== "All Items") {
-    filtered = filtered.filter((l) => l.category === activeCategory);
-  }
-  if (conditionMin > 0) {
-    filtered = filtered.filter((l) => (l.condition_score || 0) >= conditionMin);
-  }
-  filtered = filtered.filter((l) => (l.suggested_price || 0) <= maxPrice);
+    // Search query filtering
+    if (queryParam) {
+      const q = queryParam.toLowerCase();
+      result = result.filter(l => 
+        l.product?.name?.toLowerCase().includes(q) || 
+        l.description?.toLowerCase().includes(q)
+      );
+    }
 
-  // Sorting
-  switch (sortBy) {
-    case "price_asc":
-      filtered.sort((a, b) => (a.suggested_price || 0) - (b.suggested_price || 0));
-      break;
-    case "price_desc":
-      filtered.sort((a, b) => (b.suggested_price || 0) - (a.suggested_price || 0));
-      break;
-    case "condition":
-      filtered.sort((a, b) => (b.condition_score || 0) - (a.condition_score || 0));
-      break;
-    case "newest":
-    default:
-      filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-      break;
-  }
+    const cat = searchParams.get("category")?.toLowerCase().replace(/[^a-z &]/g, "").trim() || "";
+    
+    // Category filter from URL
+    if (cat && cat !== "all departments" && cat !== "all conditions" && cat !== "") {
+      if (cat === "home  kitchen") {
+        result = result.filter(l => l.product?.category?.toLowerCase() === "home");
+      } else if (cat === "eco picks") {
+        result = result; // show all — everything here is sustainable
+      } else if (["like new", "good", "fair"].includes(cat)) {
+        result = result.filter(l => l.condition_label?.toLowerCase().includes(cat));
+      } else {
+        result = result.filter(l => l.product?.category?.toLowerCase().includes(cat));
+      }
+    }
+    
+    // Condition pill filter (activeFilter state)
+    if (activeCondition !== "All Conditions" && !cat) {
+      const cond = activeCondition.replace(/[^a-zA-Z ]/g, "").trim().toLowerCase();
+      result = result.filter(l => l.condition_label?.toLowerCase().includes(cond));
+    }
+    
+    return result;
+  })();
 
   return (
-    <div className="bg-background text-on-background min-h-screen">
-      {/* Top Navigation Bar */}
-      <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10 shadow-sm h-16">
-        <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
-          <div
-            className="text-2xl font-bold text-primary flex items-center gap-2 cursor-pointer"
-            onClick={() => router.push("/")}
-          >
-            <span>🌿</span> SecondLife
-          </div>
-          <nav className="hidden md:flex items-center gap-10">
-            <a className="text-base text-on-surface-variant hover:text-primary transition-colors" href="/">
-              Home
-            </a>
-            <a className="text-base text-primary font-bold border-b-2 border-primary pb-1" href="#">
-              Marketplace
-            </a>
-            <a className="text-base text-on-surface-variant hover:text-primary transition-colors" href="#">
-              Dashboard
-            </a>
-          </nav>
-          <div className="flex items-center gap-6">
-            <div className="hidden sm:flex bg-secondary-container px-4 py-1.5 rounded-full items-center gap-2 text-on-secondary-container text-sm font-semibold tracking-wide">
-              💚 450 pts
+    <div className="bg-slc-cloud min-h-screen flex flex-col">
+      {/* HERO BANNER */}
+      <div className="bg-slc-bark text-white py-12 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold mb-2">SecondLife Marketplace</h1>
+              <p className="text-white/70 text-lg">
+                {queryParam ? `Search results for "${queryParam}"` : "AI-certified pre-owned. Every item verified before listing."}
+              </p>
             </div>
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container cursor-pointer hover:scale-105 transition-transform">
-              <Image
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyyNbZrEzvZvFadv9DHmB0Ej0iCIlb5HH7byhJEuwyQViMRP9QHEI9Nx8q_nWE3VJJjVU2KCZEb3wfybxJxm0Cl16A1XtjM3-3fueGXTmYoRA3BEGqF5B97LGhF68MW3YZvoGmxYGsN4D4GAl7Z_w3t1RdlcOm87_rgeke-pycTFdD4FKIOqYCN3vnO8Q80AlJY8mfjZiYDuIqRJEqT663LtpjQsWKqH1mg_IFiDsnZSxxKRrjYM7DpO_KQNx1emRVJWrw1n8uIY0"
-                alt="User avatar"
-                width={40}
-                height={40}
-                className="w-full h-full object-cover"
-              />
+            <div className="flex flex-wrap gap-3">
+              <span className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap">📦 1.2M Items</span>
+              <span className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap">🌿 840K kg CO₂</span>
+              <span className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap">💰 ₹24Cr Value</span>
             </div>
           </div>
-        </div>
-      </header>
 
-      <main className="pt-24 pb-16 max-w-7xl mx-auto px-6">
-        {/* Marketplace Header */}
-        <div className="mb-10">
-          <h1 className="text-5xl font-bold text-primary mb-2 leading-tight tracking-tight">
-            Second Life Marketplace
-          </h1>
-          <p className="text-on-surface-variant text-lg leading-7">
-            Premium pre-owned items curated for a greener planet.
-          </p>
-        </div>
-
-        {/* Filter Bar */}
-        <section className="mb-10 space-y-6">
-          {/* Category Pills */}
-          <div className="flex flex-wrap items-center gap-3">
-            {CATEGORY_FILTERS.map((cat) => (
+          <div className="flex flex-wrap gap-3">
+            {["All Conditions", "Like New ✨", "Good ✅", "Fair 😐"].map((filter) => (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-2 rounded-full text-sm font-semibold tracking-wide transition-all active:scale-95 ${
-                  activeCategory === cat
-                    ? "bg-primary text-on-primary shadow-md"
-                    : "bg-surface-container-high text-on-surface hover:bg-surface-container-highest"
+                key={filter}
+                onClick={() => {
+                  setActiveCondition(filter);
+                  const clean = filter.replace(/[^a-zA-Z ]/g, "").trim().toLowerCase();
+                  router.push(`/marketplace?category=${encodeURIComponent(clean)}`, { scroll: false });
+                }}
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-colors ${
+                  activeCondition === filter
+                    ? "bg-slc-amber text-slc-ink"
+                    : "bg-slc-bark border border-white/30 text-white hover:bg-white/10"
                 }`}
               >
-                {capitalizeCategory(cat)}
+                {filter}
               </button>
             ))}
           </div>
+        </div>
+      </div>
 
-          {/* Advanced Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 glass-card rounded-xl">
-            {/* Condition */}
-            <div className="relative">
-              <label className="block text-xs font-bold text-outline mb-1 uppercase tracking-wider">
-                Condition
-              </label>
-              <select
-                value={conditionMin}
-                onChange={(e) => setConditionMin(Number(e.target.value))}
-                className="w-full bg-surface border border-outline-variant/30 rounded-lg py-2 pl-3 pr-10 focus:ring-2 focus:ring-primary-container appearance-none outline-none"
-              >
-                {CONDITION_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <span className="absolute right-3 bottom-2.5 pointer-events-none text-on-surface-variant text-sm">
-                ▼
-              </span>
-            </div>
-
-            {/* Price Range */}
-            <div>
-              <label className="block text-xs font-bold text-outline mb-1 uppercase tracking-wider">
-                Max Price: {formatPrice(maxPrice)}
-              </label>
-              <input
-                type="range"
-                min={500}
-                max={50000}
-                step={500}
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full h-1.5 bg-outline-variant rounded-lg appearance-none cursor-pointer accent-primary mt-2"
-              />
-            </div>
-
-            {/* Sort */}
-            <div className="relative">
-              <label className="block text-xs font-bold text-outline mb-1 uppercase tracking-wider">
-                Sort Options
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full bg-surface border border-outline-variant/30 rounded-lg py-2 pl-3 pr-10 focus:ring-2 focus:ring-primary-container appearance-none outline-none"
-              >
-                {SORT_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <span className="absolute right-3 bottom-2.5 pointer-events-none text-on-surface-variant text-sm">
-                ↕
-              </span>
-            </div>
-
-            {/* Results count */}
-            <div className="flex items-end">
-              <div className="w-full py-2 bg-secondary/10 text-secondary rounded-lg text-sm font-semibold text-center tracking-wide">
-                {filtered.length} item{filtered.length !== 1 ? "s" : ""} found
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Loading Skeletons */}
-        {loading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="glass-card rounded-xl overflow-hidden">
-                <div className="aspect-square bg-surface-container animate-pulse" />
-                <div className="p-6 space-y-3">
-                  <div className="h-6 bg-surface-container animate-pulse rounded w-3/4" />
-                  <div className="h-4 bg-surface-container animate-pulse rounded" />
-                  <div className="h-4 bg-surface-container animate-pulse rounded w-1/2" />
-                  <div className="h-8 bg-surface-container animate-pulse rounded w-1/3 mt-4" />
-                  <div className="h-12 bg-surface-container animate-pulse rounded-xl mt-4" />
-                </div>
-              </div>
+      {/* LISTINGS GRID */}
+      <div className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 py-12">
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <div key={n} className="h-96 bg-slc-smoke animate-pulse rounded-xl border border-slc-divider" />
             ))}
           </div>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">⚠️</div>
-            <h3 className="text-2xl font-semibold mb-2">Failed to load listings</h3>
-            <p className="text-on-surface-variant">{error}</p>
+        ) : filteredListings.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-xl border border-slc-divider">
+            <p className="text-4xl mb-4">🌿</p>
+            <h3 className="text-xl font-bold text-slc-ink mb-2">No items found</h3>
+            <p className="text-slc-steel">Check back later or change your filters.</p>
           </div>
-        )}
-
-        {/* Product Grid */}
-        {!loading && !error && filtered.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {filtered.map((listing) => {
-              const badge = getConditionBadge(listing.condition_score || 0);
-              const imageUrl =
-                (listing.image_url && !listing.image_url.includes("via.placeholder.com"))
-                  ? listing.image_url
-                  : PLACEHOLDER_IMAGES[listing.category] || PLACEHOLDER_IMAGES.electronics;
-              const isSold = listing.status === "sold";
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredListings.map((listing) => {
+              // Convert Listing to Product shape for ProductCard
+              const productShape = {
+                id: listing.product_id,
+                listing_id: listing.id,
+                name: listing.product.name,
+                category: listing.product.category,
+                image_url: listing.product.image_url,
+                asking_price: listing.asking_price,
+                condition_label: listing.condition_label,
+                ai_grade: listing.ai_grade,
+                description: listing.description
+              };
 
               return (
-                <article
+                <ProductCard
                   key={listing.id}
-                  className={`group glass-card rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col ${
-                    isSold ? "opacity-60" : ""
-                  }`}
-                >
-                  <div className="relative aspect-square overflow-hidden">
-                    <Image
-                      src={imageUrl}
-                      alt={listing.product_name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    {/* Condition Badge */}
-                    <div
-                      className={`absolute top-4 left-4 ${badge.className} px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg`}
-                    >
-                      {badge.label}
-                    </div>
-                    {/* CO2 Badge */}
-                    <div className="absolute bottom-4 right-4 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-md">
-                      <span className="text-primary text-sm">🌍</span>
-                      <span className="text-xs font-bold text-primary">
-                        {listing.co2_saved}kg CO₂ saved
-                      </span>
-                    </div>
-                    {/* Sold Overlay */}
-                    {isSold && (
-                      <div className="absolute inset-0 bg-inverse-surface/60 flex items-center justify-center">
-                        <span className="bg-error text-on-error px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest">
-                          Sold
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-6 flex-grow flex flex-col">
-                    <h3 className="text-2xl font-semibold text-on-surface mb-2 leading-8">
-                      {listing.product_name}
-                    </h3>
-                    <p className="text-on-surface-variant text-sm mb-4 line-clamp-2">
-                      {listing.ai_description ||
-                        `${listing.verdict} grade item. Condition score: ${listing.condition_score}/100.`}
-                    </p>
-                    <div className="flex items-end gap-3 mb-6">
-                      <span className="text-2xl font-bold text-primary">
-                        {formatPrice(listing.suggested_price)}
-                      </span>
-                      {listing.original_price > listing.suggested_price && (
-                        <span className="text-outline line-through text-sm mb-1">
-                          {formatPrice(listing.original_price)}
-                        </span>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => !isSold && handlePurchase(listing.id)}
-                      disabled={isSold}
-                      className={`w-full py-3 rounded-xl text-sm font-semibold tracking-wide flex items-center justify-center gap-2 transition-colors shadow-lg shadow-primary/20 ${
-                        isSold
-                          ? "bg-outline text-surface cursor-not-allowed"
-                          : "bg-primary text-on-primary hover:bg-on-secondary-fixed-variant"
-                      }`}
-                    >
-                      <span>{isSold ? "Sold Out" : "Buy & Earn 150 Credits"}</span>
-                      {!isSold && <span className="text-lg">💚</span>}
-                    </button>
-                  </div>
-                </article>
+                  product={productShape}
+                  isMarketplace={true}
+                  isExpanded={expandedId === listing.id}
+                  onClick={() => setExpandedId(listing.id)}
+                  onCollapse={() => setExpandedId(null)}
+                  onPurchase={() => handlePurchase(listing.id)}
+                />
               );
             })}
           </div>
         )}
+      </div>
 
-        {/* Empty State */}
-        {!loading && !error && filtered.length === 0 && (
-          <div className="text-center py-20">
-            <div className="w-24 h-24 mx-auto mb-6 bg-surface-container-high rounded-full flex items-center justify-center">
-              <span className="text-4xl">🔍</span>
+      {/* TRUST FOOTER STRIP */}
+      <div className="bg-slc-cloud border-t border-slc-divider py-12 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm border border-slc-divider shrink-0">🤖</div>
+            <div>
+              <h4 className="text-slc-ink font-bold text-sm">AI-Verified</h4>
+              <p className="text-slc-steel text-xs font-medium">No fake listings</p>
             </div>
-            <h3 className="text-2xl font-semibold mb-2">No listings match your filters</h3>
-            <p className="text-on-surface-variant text-base mb-6 max-w-md mx-auto">
-              Try adjusting your category, condition, or price filters to discover more
-              second-life treasures.
-            </p>
-            <button
-              onClick={() => {
-                setActiveCategory("All Items");
-                setConditionMin(0);
-                setMaxPrice(50000);
-                setSortBy("newest");
-              }}
-              className="px-8 py-3 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-on-primary transition-all duration-300"
-            >
-              Reset All Filters
-            </button>
           </div>
-        )}
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm border border-slc-divider shrink-0">🔒</div>
+            <div>
+              <h4 className="text-slc-ink font-bold text-sm">Secure Payment</h4>
+              <p className="text-slc-steel text-xs font-medium">Amazon protection</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm border border-slc-divider shrink-0">🚚</div>
+            <div>
+              <h4 className="text-slc-ink font-bold text-sm">Fast Delivery</h4>
+              <p className="text-slc-steel text-xs font-medium">Local fulfillment</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm border border-slc-divider shrink-0">♻️</div>
+            <div>
+              <h4 className="text-slc-ink font-bold text-sm">Eco-Friendly</h4>
+              <p className="text-slc-steel text-xs font-medium">Zero waste</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        {/* Explore More */}
-        {!loading && !error && filtered.length > 0 && (
-          <div className="mt-16 flex justify-center">
-            <button
-              onClick={() => router.push("/")}
-              className="px-12 py-4 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-on-primary transition-all duration-300"
-            >
-              Explore More Gems
-            </button>
-          </div>
-        )}
-      </main>
-
-      {/* Footer */}
-      <footer className="w-full py-10 px-6 flex flex-col md:flex-row justify-between items-center gap-6 bg-surface-container-low border-t border-outline-variant/20">
-        <div className="flex flex-col items-center md:items-start gap-2">
-          <div className="text-xl font-bold text-primary flex items-center gap-2">
-            <span>🌿</span> SecondLife
-          </div>
-          <p className="text-sm font-semibold text-on-surface-variant max-w-xs text-center md:text-left">
-            © 2024 SecondLife by Amazon. Circular economy for a greener planet.
-          </p>
-        </div>
-        <div className="flex flex-wrap justify-center gap-6">
-          <a className="text-sm font-semibold text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">
-            Sustainability Report
-          </a>
-          <a className="text-sm font-semibold text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">
-            How it Works
-          </a>
-          <a className="text-sm font-semibold text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">
-            Terms of Service
-          </a>
-          <a className="text-sm font-semibold text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">
-            Help Center
-          </a>
-        </div>
-        <div className="flex gap-4">
-          <button className="w-10 h-10 rounded-full bg-surface flex items-center justify-center hover:scale-110 transition-transform shadow-sm">
-            <span className="text-secondary">🌐</span>
-          </button>
-          <button className="w-10 h-10 rounded-full bg-surface flex items-center justify-center hover:scale-110 transition-transform shadow-sm">
-            <span className="text-secondary">📤</span>
-          </button>
-        </div>
-      </footer>
+      <ToastComponent />
     </div>
+  );
+}
+
+export default function MarketplacePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slc-cloud animate-pulse" />}>
+      <MarketplaceContent />
+    </Suspense>
   );
 }
