@@ -1,0 +1,27 @@
+# Environment files
+.env
+.env.*
+.env.local
+backend/.env
+frontend/.env.local
+
+# Python / FastAPI
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.egg-info/
+venv/
+env/
+.pytest_cache/
+dist/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+.vercel/
+
+# Misc
+.DS_Store
