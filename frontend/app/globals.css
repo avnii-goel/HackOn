@@ -1,26 +1,68 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+
+  --color-surface-container-highest: #dce2f7;
+  --color-inverse-primary: #4edea3;
+  --color-tertiary-container: #fc7c78;
+  --color-on-secondary-fixed-variant: #00513b;
+  --color-on-tertiary-container: #711419;
+  --color-surface: #f9f9ff;
+  --color-secondary: #1b6b51;
+  --color-surface-variant: #dce2f7;
+  --color-surface-tint: #006c49;
+  --color-secondary-container: #a6f2d1;
+  --color-primary: #006c49;
+  --color-surface-container: #e9edff;
+  --color-tertiary-fixed: #ffdad7;
+  --color-on-error: #ffffff;
+  --color-on-surface-variant: #3c4a42;
+  --color-primary-fixed-dim: #4edea3;
+  --color-surface-dim: #d3daef;
+  --color-on-secondary-container: #237157;
+  --color-primary-container: #10b981;
+  --color-error-container: #ffdad6;
+  --color-on-tertiary-fixed: #410005;
+  --color-surface-container-low: #f1f3ff;
+  --color-on-primary-fixed-variant: #005236;
+  --color-surface-bright: #f9f9ff;
+  --color-inverse-surface: #293040;
+  --color-on-tertiary-fixed-variant: #842225;
+  --color-tertiary-fixed-dim: #ffb3af;
+  --color-on-primary: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-error-container: #93000a;
+  --color-tertiary: #a43a3a;
+  --color-primary-fixed: #6ffbbe;
+  --color-on-primary-fixed: #002113;
+  --color-secondary-fixed: #a6f2d1;
+  --color-on-primary-container: #00422b;
+  --color-error: #ba1a1a;
+  --color-on-secondary: #ffffff;
+  --color-inverse-on-surface: #edf0ff;
+  --color-background: #f9f9ff;
+  --color-surface-container-high: #e1e8fd;
+  --color-on-tertiary: #ffffff;
+  --color-secondary-fixed-dim: #8bd6b6;
+  --color-on-background: #141b2b;
+  --color-outline-variant: #bbcabf;
+  --color-on-secondary-fixed: #002116;
+  --color-on-surface: #141b2b;
+  --color-outline: #6c7a71;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, #00422b 0%, #006c49 100%);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-on-background);
 }
