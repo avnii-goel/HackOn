@@ -31,14 +31,18 @@ interface RiskData {
 }
 
 const fallbackProducts: Product[] = [
-  { id: "1", name: "Sony WH-1000XM5 Headphones", category: "electronics", price: 29990, image_url: null, return_rate: 18, common_return_reasons: ["Sound quality not as expected", "Uncomfortable fit", "Connectivity issues"], refurb_available: true, refurb_price: 21990, description: "Premium noise cancelling headphones" },
-  { id: "2", name: "Nike Air Max Running Shoes", category: "clothing", price: 8995, image_url: null, return_rate: 34, common_return_reasons: ["Size runs small", "Different color than shown", "Sole defect"], refurb_available: true, refurb_price: 5995, description: "Lightweight running shoes" },
-  { id: "3", name: "Apple iPad 10th Gen", category: "electronics", price: 44900, image_url: null, return_rate: 12, common_return_reasons: ["Dead pixels", "Performance issues", "Not compatible"], refurb_available: true, refurb_price: 32900, description: "Powerful tablet for work and play" },
+  { id: "49a5bb33-491a-40fd-8bf8-3c7ae1742ba8", name: "Sony WH-1000XM5 Headphones", category: "electronics", price: 29990, image_url: null, return_rate: 18, common_return_reasons: ["Sound quality not as expected", "Uncomfortable fit", "Connectivity issues"], refurb_available: true, refurb_price: 21990, description: "Premium noise cancelling headphones" },
+  { id: "845b773e-9cd6-44c4-8228-cf68fc9db0e0", name: "Nike Air Max Running Shoes", category: "clothing", price: 8995, image_url: null, return_rate: 34, common_return_reasons: ["Size runs small", "Different color than shown", "Sole defect"], refurb_available: true, refurb_price: 5995, description: "Lightweight running shoes" },
+  { id: "38a3d713-1025-4c44-96a0-714c9b6f7e98", name: "Apple iPad 10th Gen", category: "electronics", price: 44900, image_url: null, return_rate: 12, common_return_reasons: ["Dead pixels", "Performance issues", "Not compatible"], refurb_available: true, refurb_price: 32900, description: "Powerful tablet for work and play" },
+  { id: "d3ed85f7-d2ff-4a7f-800d-7dca16c5534b", name: "Prestige Pressure Cooker 5L", category: "home", price: 2499, image_url: null, return_rate: 8, common_return_reasons: ["Whistle defective", "Wrong size delivered"], refurb_available: false, refurb_price: null, description: "Durable stainless steel cooker" },
+  { id: "f1a45e60-5279-414c-906b-2462b8298036", name: "Atomic Habits Book", category: "books", price: 399, image_url: null, return_rate: 5, common_return_reasons: ["Damaged pages", "Wrong edition"], refurb_available: false, refurb_price: null, description: "Bestselling self-improvement book" },
+  { id: "f0ca88ae-487a-45fd-9e09-e14b6364a4e5", name: "Nivia Football Size 5", category: "sports", price: 1299, image_url: null, return_rate: 15, common_return_reasons: ["Air doesn't hold", "Size smaller than expected"], refurb_available: true, refurb_price: 799, description: "Professional match football" },
 ];
 
 const fallbackRiskData: Record<string, RiskData> = {
-  "1": { product_id: "1", return_rate: 18, risk_level: "medium", common_reasons: ["Sound quality not as expected", "Uncomfortable fit"], refurb_available: true, refurb_price: 21990, prevention_tip: "Check the fit guide before buying." },
-  "2": { product_id: "2", return_rate: 34, risk_level: "high", common_reasons: ["Size runs small", "Different color"], refurb_available: true, refurb_price: 5995, prevention_tip: "Consider ordering half a size up based on recent returns." },
+  "49a5bb33-491a-40fd-8bf8-3c7ae1742ba8": { product_id: "49a5bb33-491a-40fd-8bf8-3c7ae1742ba8", return_rate: 18, risk_level: "medium", common_reasons: ["Sound quality not as expected", "Uncomfortable fit"], refurb_available: true, refurb_price: 21990, prevention_tip: "Check the fit guide before buying." },
+  "845b773e-9cd6-44c4-8228-cf68fc9db0e0": { product_id: "845b773e-9cd6-44c4-8228-cf68fc9db0e0", return_rate: 34, risk_level: "high", common_reasons: ["Size runs small", "Different color"], refurb_available: true, refurb_price: 5995, prevention_tip: "Consider ordering half a size up based on recent returns." },
+  "38a3d713-1025-4c44-96a0-714c9b6f7e98": { product_id: "38a3d713-1025-4c44-96a0-714c9b6f7e98", return_rate: 12, risk_level: "medium", common_reasons: ["Dead pixels", "Performance issues"], refurb_available: true, refurb_price: 32900, prevention_tip: "Check compatibility with your existing devices before purchasing." },
 };
 
 const PLACEHOLDER_IMAGES: Record<string, string> = {
@@ -63,19 +67,58 @@ export default function ProductPage() {
     if (!id) return;
     const fetchData = async () => {
       try {
+        // First try to find in products table
         const prodRes = await fetch(`${API_URL}/marketplace/products`);
         if (prodRes.ok) {
           const prods: Product[] = await prodRes.json();
           const found = prods.find((p) => p.id === id);
-          if (found) setProduct(found);
-          else throw new Error("Not found");
-        } else throw new Error("Failed");
+          if (found) {
+            setProduct(found);
+            // Fetch risk data for this product
+            try {
+              const riskRes = await fetch(`${API_URL}/prevention/risk/${id}`);
+              if (riskRes.ok) {
+                const data: RiskData = await riskRes.json();
+                setRiskData(data);
+              }
+            } catch {}
+            setLoading(false);
+            return;
+          }
+        }
 
-        const riskRes = await fetch(`${API_URL}/prevention/risk/${id}`);
-        if (riskRes.ok) {
-          const data: RiskData = await riskRes.json();
-          setRiskData(data);
-        } else throw new Error("Failed risk");
+        // If not found in products, try listings table
+        const listingRes = await fetch(`${API_URL}/marketplace/listings/${id}`);
+        if (listingRes.ok) {
+          const listing = await listingRes.json();
+          // Convert listing to product shape
+          const listingAsProduct: Product = {
+            id: listing.id,
+            name: listing.product_name || listing.product?.name || "Product",
+            category: listing.category || listing.product?.category || "electronics",
+            price: listing.original_price || listing.asking_price || 0,
+            image_url: listing.image_url || listing.product?.image_url || null,
+            return_rate: 15,
+            common_return_reasons: ["General wear", "No longer needed"],
+            refurb_available: true,
+            refurb_price: listing.suggested_price || listing.asking_price || 0,
+            description: listing.description || listing.ai_description || null,
+          };
+          setProduct(listingAsProduct);
+          setRiskData({
+            product_id: id,
+            return_rate: 15,
+            risk_level: "medium",
+            common_reasons: ["General wear"],
+            refurb_available: true,
+            refurb_price: listing.suggested_price || listing.asking_price || 0,
+            prevention_tip: "This is a pre-owned item already verified by SecondLife.",
+          });
+          setLoading(false);
+          return;
+        }
+
+        throw new Error("Not found in products or listings");
       } catch (err) {
         const fallbackProd = fallbackProducts.find((p) => p.id === id) || fallbackProducts[0];
         setProduct(fallbackProd);
@@ -263,22 +306,6 @@ export default function ProductPage() {
               <button onClick={() => showToast("Proceeding to checkout")} className="w-full bg-slc-amber/80 hover:bg-slc-amber text-slc-ink font-bold py-3 rounded-full shadow-sm transition-colors text-sm">
                 Buy Now
               </button>
-              
-              <div className="flex items-center gap-4 my-2">
-                <div className="h-px bg-slc-divider flex-1" />
-                <span className="text-xs text-slc-steel font-bold uppercase">or</span>
-                <div className="h-px bg-slc-divider flex-1" />
-              </div>
-
-              <button 
-                onClick={() => router.push(`/return/${product.id}`)}
-                className="w-full border border-slc-divider text-slc-steel hover:bg-slc-cloud font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-              >
-                ↩ Return This Item
-              </button>
-              <p className="text-xs text-slc-leaf font-semibold text-center">
-                🌿 Choosing resell earns you 200 Green Credits
-              </p>
             </div>
 
             <p className="text-xs text-slc-steel mt-5 font-medium">
@@ -290,60 +317,6 @@ export default function ProductPage() {
 
         {/* BELOW THE FOLD */}
         <div className="mt-12 max-w-3xl">
-          
-          {/* Why People Return This */}
-          {reasons.length > 0 && (
-            <div className="bg-white rounded-xl border border-slc-divider p-6 mb-6 shadow-sm">
-              <h3 className="font-bold text-slc-ink text-lg mb-4">Why People Return This</h3>
-              <div className="space-y-4">
-                {reasons.slice(0, 3).map((reason, idx) => (
-                  <div key={idx}>
-                    <div className="flex justify-between text-sm font-semibold text-slc-ink mb-1">
-                      <span>{reason}</span>
-                      <span>{fakePercentages[idx] || 10}%</span>
-                    </div>
-                    <div className="h-2 w-full bg-slc-smoke rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-slc-amber rounded-full" 
-                        style={{ width: `${fakePercentages[idx] || 10}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Before You Return */}
-          {riskData.refurb_available && (
-            <div className="bg-slc-leaf-light rounded-xl p-6 border border-slc-leaf/20 shadow-sm">
-              <h3 className="font-bold text-slc-leaf-dark text-lg mb-4 flex items-center gap-2">
-                💡 Customers who chose SecondLife instead of returning:
-              </h3>
-              
-              <div className="flex flex-col sm:flex-row gap-3 mb-6">
-                <div className="bg-white rounded-lg p-3 flex-1 text-center border border-slc-leaf/10 shadow-sm">
-                  <p className="text-xs text-slc-steel font-bold uppercase">Saved</p>
-                  <p className="text-lg font-bold text-slc-leaf">₹{(product.price - (riskData.refurb_price || 0)).toLocaleString('en-IN')} avg</p>
-                </div>
-                <div className="bg-white rounded-lg p-3 flex-1 text-center border border-slc-leaf/10 shadow-sm">
-                  <p className="text-xs text-slc-steel font-bold uppercase">Earned</p>
-                  <p className="text-lg font-bold text-slc-leaf">200 💚 credits</p>
-                </div>
-                <div className="bg-white rounded-lg p-3 flex-1 text-center border border-slc-leaf/10 shadow-sm">
-                  <p className="text-xs text-slc-steel font-bold uppercase">Sold In</p>
-                  <p className="text-lg font-bold text-slc-leaf">&lt;48 hrs avg</p>
-                </div>
-              </div>
-
-              <button 
-                onClick={() => router.push(`/return/${product.id}`)}
-                className="w-full bg-slc-leaf hover:bg-slc-leaf-dark text-white text-lg font-bold py-4 rounded-xl shadow-md transition-colors"
-              >
-                Resell Instead of Returning → Earn 200 Credits
-              </button>
-            </div>
-          )}
         </div>
 
       </div>

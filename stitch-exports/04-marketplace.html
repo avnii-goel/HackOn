@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .condition-gauge-track {
+            stroke: #E5E7EB;
+            stroke-linecap: round;
+        }
+        .condition-gauge-fill {
+            stroke-dasharray: 100;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #F3F4F6 0%, #E5E7EB 50%, #F3F4F6 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#dce2f7",
+                        "inverse-primary": "#4edea3",
+                        "tertiary-container": "#fc7c78",
+                        "on-secondary-fixed-variant": "#00513b",
+                        "on-tertiary-container": "#711419",
+                        "surface": "#f9f9ff",
+                        "secondary": "#1b6b51",
+                        "surface-variant": "#dce2f7",
+                        "surface-tint": "#006c49",
+                        "secondary-container": "#a6f2d1",
+                        "primary": "#006c49",
+                        "surface-container": "#e9edff",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#3c4a42",
+                        "primary-fixed-dim": "#4edea3",
+                        "surface-dim": "#d3daef",
+                        "on-secondary-container": "#237157",
+                        "primary-container": "#10b981",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#410005",
+                        "surface-container-low": "#f1f3ff",
+                        "on-primary-fixed-variant": "#005236",
+                        "surface-bright": "#f9f9ff",
+                        "inverse-surface": "#293040",
+                        "on-tertiary-fixed-variant": "#842225",
+                        "tertiary-fixed-dim": "#ffb3af",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#a43a3a",
+                        "primary-fixed": "#6ffbbe",
+                        "on-primary-fixed": "#002113",
+                        "secondary-fixed": "#a6f2d1",
+                        "on-primary-container": "#00422b",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#edf0ff",
+                        "background": "#f9f9ff",
+                        "surface-container-high": "#e1e8fd",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#8bd6b6",
+                        "on-background": "#141b2b",
+                        "outline-variant": "#bbcabf",
+                        "on-secondary-fixed": "#002116",
+                        "on-surface": "#141b2b",
+                        "outline": "#6c7a71"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "lg": "40px",
+                        "xl": "64px",
+                        "sm": "12px",
+                        "container-margin": "24px",
+                        "md": "24px",
+                        "xs": "4px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10 shadow-sm h-16">
+<div class="max-w-7xl mx-auto px-container-margin h-full flex justify-between items-center">
+<div class="font-headline-md text-headline-md font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">eco</span>
+                SecondLife
+            </div>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors hover:scale-105 transition-transform duration-200" href="#">Home</a>
+<a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-1" href="#">Marketplace</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors hover:scale-105 transition-transform duration-200" href="#">Dashboard</a>
+</nav>
+<div class="flex items-center gap-md">
+<div class="hidden sm:flex bg-secondary-container px-4 py-1.5 rounded-full items-center gap-2 text-on-secondary-container font-label-md">
+<span class="material-symbols-outlined text-sm">potted_plant</span>
+                    💚 450 pts
+                </div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container cursor-pointer hover:scale-105 transition-transform">
+<img alt="User profile avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyyNbZrEzvZvFadv9DHmB0Ej0iCIlb5HH7byhJEuwyQViMRP9QHEI9Nx8q_nWE3VJJjVU2KCZEb3wfybxJxm0Cl16A1XtjM3-3fueGXTmYoRA3BEGqF5B97LGhF68MW3YZvoGmxYGsN4D4GAl7Z_w3t1RdlcOm87_rgeke-pycTFdD4FKIOqYCN3vnO8Q80AlJY8mfjZiYDuIqRJEqT663LtpjQsWKqH1mg_IFiDsnZSxxKRrjYM7DpO_KQNx1emRVJWrw1n8uIY0"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-xl max-w-7xl mx-auto px-container-margin">
+<!-- Marketplace Header -->
+<div class="mb-lg">
+<h1 class="font-display-lg text-display-lg text-primary mb-2">Second Life Marketplace</h1>
+<p class="text-on-surface-variant font-body-lg">Premium pre-owned items curated for a greener planet.</p>
+</div>
+<!-- Filter Bar -->
+<section class="mb-lg space-y-md">
+<div class="flex flex-wrap items-center gap-sm">
+<button class="px-6 py-2 rounded-full bg-primary text-on-primary font-label-md shadow-md transition-all active:scale-95">All Items</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all font-label-md">Electronics</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all font-label-md">Home Office</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all font-label-md">Kitchen</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all font-label-md">Fashion</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md p-md glass-card rounded-xl">
+<div class="relative">
+<label class="block text-xs font-bold text-outline mb-1 uppercase tracking-wider">Condition</label>
+<select class="w-full bg-surface border-outline-variant/30 rounded-lg py-2 pl-3 pr-10 focus:ring-2 focus:ring-primary-container appearance-none">
+<option>Excellent 80+</option>
+<option>Good 60-80</option>
+<option>Fair 40-60</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 bottom-2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+<div class="relative">
+<label class="block text-xs font-bold text-outline mb-1 uppercase tracking-wider">Price Range</label>
+<div class="flex items-center gap-2">
+<input class="w-full h-1.5 bg-outline-variant rounded-lg appearance-none cursor-pointer accent-primary" max="10000" min="500" type="range"/>
+</div>
+</div>
+<div class="relative">
+<label class="block text-xs font-bold text-outline mb-1 uppercase tracking-wider">Sort Options</label>
+<select class="w-full bg-surface border-outline-variant/30 rounded-lg py-2 pl-3 pr-10 focus:ring-2 focus:ring-primary-container appearance-none">
+<option>Latest Arrivals</option>
+<option>Lowest CO₂ Impact</option>
+<option>Price: Low to High</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 bottom-2 pointer-events-none text-on-surface-variant">sort</span>
+</div>
+<div class="flex items-end">
+<button class="w-full py-2 bg-secondary text-on-secondary rounded-lg font-label-md hover:scale-[1.02] active:scale-95 transition-all">Apply Filters</button>
+</div>
+</div>
+</section>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Listing 1 -->
+<article class="group glass-card rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+<div class="relative aspect-square overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A premium silver minimalist mechanical keyboard resting on a clean white desk. Soft daylight streams through a window, highlighting the high-quality aluminum texture and matte keycaps. The aesthetic is extremely modern and professional, following a corporate minimalist design language with soft shadows and emerald green plant accents in the background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjrQ8zWAGEnVtr-Zlie3lYjXeZgIBKPkIO8As_q93G2TCw5YaH-qMkXfpXY0VQectW25Hs6U8vl0JZ2GBaxLUsdK7t2sh6s9jb8UaDo3yGPG7reE8H-cUxkVgDvFZLzhQkQ9qF9L3uX1uVBC1uCXpGIB9T1_5c2d8eySsa922WoQJAQNZoN6dJIeOjabiAtKpJQKS0NTTB8ZI9JGvM5XGnYcfRH9_4b3kNufX3QyZALagkp1_LW-rNPQYv01CXT3ek2r35S3kT3gQ"/>
+<div class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">Excellent</div>
+<div class="absolute bottom-4 right-4 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">public</span>
+<span class="text-xs font-bold text-primary">2.5kg CO₂ saved</span>
+</div>
+</div>
+<div class="p-md flex-grow flex flex-col">
+<h3 class="font-headline-md text-on-surface mb-2">Artisan Mechanical Keyboard</h3>
+<p class="text-on-surface-variant text-sm mb-4 line-clamp-2">Precision-engineered with Gateron switches. Minimal wear, fully sanitized, and performance-tested by SecondLife technicians.</p>
+<div class="flex items-end gap-3 mb-6">
+<span class="text-2xl font-bold text-primary">₹3,499</span>
+<span class="text-outline line-through text-sm mb-1">₹5,999</span>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center gap-2 group-hover:bg-on-secondary-fixed-variant transition-colors shadow-lg shadow-primary/20">
+<span>Buy & Earn 150 Credits</span>
+<span class="text-lg">💚</span>
+</button>
+</div>
+</article>
+<!-- Listing 2 -->
+<article class="group glass-card rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+<div class="relative aspect-square overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A sleek, matte black espresso machine on a marble kitchen countertop. The lighting is sophisticated and moody, creating a high-end luxury kitchen ambiance. The machine's metallic accents catch the light, emphasizing its durable construction. The surrounding environment is pristine, featuring emerald green ceramic cups and a single sprig of eucalyptus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCECE_DvejZDxfqB60SLdm57E68FxlNId-QuZLqoXMwUSrRTqwtUODvkNhkOfBK4NWMzQa9VUXZ9KGb6jzpcYzobNpmUuAO5KQhMtERI-3TykUAj_AYRxzMC4Q4yHK45H_i2VBp6eSekiHzyQokgIXx-ANkDiYknuGXfgeMDMt6DlmEh1cqyoFY8ey3vBlS63PwB2SO6A6E3z8oGNEqmfcLwrQy7p1-V0MY7Y1c9_SCjr59icNfKMYkTjMwiljNDVDduji3uWAGi0M"/>
+<div class="absolute top-4 left-4 bg-secondary text-on-secondary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">Good</div>
+<div class="absolute bottom-4 right-4 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">public</span>
+<span class="text-xs font-bold text-primary">12.8kg CO₂ saved</span>
+</div>
+</div>
+<div class="p-md flex-grow flex flex-col">
+<h3 class="font-headline-md text-on-surface mb-2">Modern Espresso Craft</h3>
+<p class="text-on-surface-variant text-sm mb-4 line-clamp-2">Professional-grade pressure brewing. Gently used in a corporate environment. Complete with original portafilter and descaled.</p>
+<div class="flex items-end gap-3 mb-6">
+<span class="text-2xl font-bold text-primary">₹8,999</span>
+<span class="text-outline line-through text-sm mb-1">₹14,500</span>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center gap-2 group-hover:bg-on-secondary-fixed-variant transition-colors shadow-lg shadow-primary/20">
+<span>Buy & Earn 400 Credits</span>
+<span class="text-lg">💚</span>
+</button>
+</div>
+</article>
+<!-- Listing 3 -->
+<article class="group glass-card rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+<div class="relative aspect-square overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A pair of high-fidelity wireless headphones in midnight blue, displayed on a minimalist wooden stand. The lighting is crisp and editorial, highlighting the plush leather earpads and precision-engineered hinges. The background is a soft-focus office interior with clean lines and a lush green monstera plant, evoking a sense of calm focus and sustainability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6oKwndJ0AlgQgkHE9A9dS16nLbk2_LzYkO9FX9m0ih3URASZsDRipd33vLN_iJNEh_b5vH6qyltenpeWfWqoQPWSvRqeGuGGv8uxR41GfJGd3pR8YHDS-QkMvhKHmOx5djrpmWe6BqS6xM8-JegXzMllu3r_ZHzbQMjRqqqayVxUqyZypU75Uwsug_zosc4gbgI29aMDx7g9PjGkFwLuLGMGIY1u-FCPYrZNYNotBpoGojp9E3RLodtrbSVC_xqXbz1VgclGKeFY"/>
+<div class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">Excellent</div>
+<div class="absolute bottom-4 right-4 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">public</span>
+<span class="text-xs font-bold text-primary">1.2kg CO₂ saved</span>
+</div>
+</div>
+<div class="p-md flex-grow flex flex-col">
+<h3 class="font-headline-md text-on-surface mb-2">Studio Wireless Headphones</h3>
+<p class="text-on-surface-variant text-sm mb-4 line-clamp-2">Noise-canceling excellence with 40-hour battery life. Original box and all cables included. No visible scuffs or wear.</p>
+<div class="flex items-end gap-3 mb-6">
+<span class="text-2xl font-bold text-primary">₹12,499</span>
+<span class="text-outline line-through text-sm mb-1">₹22,999</span>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center gap-2 group-hover:bg-on-secondary-fixed-variant transition-colors shadow-lg shadow-primary/20">
+<span>Buy & Earn 600 Credits</span>
+<span class="text-lg">💚</span>
+</button>
+</div>
+</article>
+<!-- Listing 4 -->
+<article class="group glass-card rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+<div class="relative aspect-square overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A minimalist designer desk lamp with a warm glowing LED, set against a dark textured wall. The design is sleek and contemporary, using recycled polymer materials. Warm amber light casts soft shadows on a nearby stack of linen notebooks. The scene feels cozy yet professional, perfect for a high-end circular economy marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCohwIeEyz916fCl3Sx6N4UYGbfgeaY1kuc84S6NTwTRpo93P3FoKBi4ySpyH6qXf9OAajWEwM1BwWOXZ2az8dZWarr2lA0zD65nH-6H1803J7h4F4LZdwyGJVNHY81GIcuAbO0Xx-0RGenh5eY-BVNwD4gjcJYy9MgqqQvRomB_T4uDbyIVYsVCuwHkEjH46tyWZDU6Ihho5NHJUQWJMtDDdzvC1a6tVDBm05LjNu5YS-Mc_kE1I4O8S9DCBt7ApfUuNK1QvssdGQ"/>
+<div class="absolute top-4 left-4 bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">Fair</div>
+<div class="absolute bottom-4 right-4 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">public</span>
+<span class="text-xs font-bold text-primary">4.1kg CO₂ saved</span>
+</div>
+</div>
+<div class="p-md flex-grow flex flex-col">
+<h3 class="font-headline-md text-on-surface mb-2">Sculptural Task Lamp</h3>
+<p class="text-on-surface-variant text-sm mb-4 line-clamp-2">Minor surface scratches on the base. Fully functional dimming features. A beautiful addition to any sustainable workspace.</p>
+<div class="flex items-end gap-3 mb-6">
+<span class="text-2xl font-bold text-primary">₹1,299</span>
+<span class="text-outline line-through text-sm mb-1">₹3,200</span>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center gap-2 group-hover:bg-on-secondary-fixed-variant transition-colors shadow-lg shadow-primary/20">
+<span>Buy & Earn 50 Credits</span>
+<span class="text-lg">💚</span>
+</button>
+</div>
+</article>
+<!-- Listing 5 -->
+<article class="group glass-card rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+<div class="relative aspect-square overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A high-performance air purifier in a modern living room setting. The unit is sleek, white, and cylindrical, positioned next to a large floor plant with vibrant green leaves. Soft, diffused lighting creates a clean and healthy atmosphere. The aesthetic is bright and airy, emphasizing the purity and environmental benefits of the product." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBo-0IuxKzTGlo8aZcszpu7T7ZnM7UjRMDpZJ9ORgKOAUKqQ906Mxa4Ui0qHtm8Dg2a2Ee8wqJXnjxMvOZrH01bJVb-DBawGJ-Uu6J0EOlkTgOU5OLdbtX0IrumYAplsHh_SDDaqZ84LmrsVbSlq2xe2mpo_iUbJiOjDH0ZZqzUeC-w8PAchUhfZJnWjsJNwtLs0rskLzFBlIazPaDrlXHBh_I8C9oYh_28T2qZKOyB_QGwXJlTMPZCQu8Q0ubx62wz2DF_i8Ppeqs"/>
+<div class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">Excellent</div>
+<div class="absolute bottom-4 right-4 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">public</span>
+<span class="text-xs font-bold text-primary">7.8kg CO₂ saved</span>
+</div>
+</div>
+<div class="p-md flex-grow flex flex-col">
+<h3 class="font-headline-md text-on-surface mb-2">Eco-Purity Air Filter</h3>
+<p class="text-on-surface-variant text-sm mb-4 line-clamp-2">Brand new HEPA filter installed. Smart home integration compatible. Certified refurbished with 6-month warranty.</p>
+<div class="flex items-end gap-3 mb-6">
+<span class="text-2xl font-bold text-primary">₹4,899</span>
+<span class="text-outline line-through text-sm mb-1">₹8,499</span>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center gap-2 group-hover:bg-on-secondary-fixed-variant transition-colors shadow-lg shadow-primary/20">
+<span>Buy & Earn 250 Credits</span>
+<span class="text-lg">💚</span>
+</button>
+</div>
+</article>
+<!-- Listing 6 -->
+<article class="group glass-card rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+<div class="relative aspect-square overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A premium ergonomically designed office chair with a mesh back and sleek black frame. It sits on a polished light wood floor in a brightly lit home office. A large window in the background shows lush green trees. The overall style is professional, high-end, and extremely comfortable, fitting the premium pre-owned theme of the marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJU1M-uyCHIhwvqwipVGZOgg7PbKIiyKGxmA7Etm2HNmFB8Hd_JuKsbFOiKrATckcgyTpmjm26_HB9iUAvqlgOyWYINNQj5QsuT3hnz--F7VBUv29RpL8P7d3xBlXKjR__J14OODhvZxTjRO5v1my6JkFY1QmY18zRizn4ufTsjn_6yPxBM-EaWNEyz7p40Syy29OS8s45tfksspZbQcUqmBppEcZmW-EuPHVvQte9KnBkxK-2zfpURYJRcij_q-CQVQqQ6Zfa5zc"/>
+<div class="absolute top-4 left-4 bg-secondary text-on-secondary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">Good</div>
+<div class="absolute bottom-4 right-4 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">public</span>
+<span class="text-xs font-bold text-primary">15.5kg CO₂ saved</span>
+</div>
+</div>
+<div class="p-md flex-grow flex flex-col">
+<h3 class="font-headline-md text-on-surface mb-2">Pro-Flow Ergonomic Chair</h3>
+<p class="text-on-surface-variant text-sm mb-4 line-clamp-2">Adjustable lumbar support and 4D armrests. Mesh is in perfect condition. Minor scuffing on the casters.</p>
+<div class="flex items-end gap-3 mb-6">
+<span class="text-2xl font-bold text-primary">₹14,999</span>
+<span class="text-outline line-through text-sm mb-1">₹28,500</span>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center gap-2 group-hover:bg-on-secondary-fixed-variant transition-colors shadow-lg shadow-primary/20">
+<span>Buy & Earn 750 Credits</span>
+<span class="text-lg">💚</span>
+</button>
+</div>
+</article>
+</div>
+<!-- Pagination / Load More -->
+<div class="mt-xl flex justify-center">
+<button class="px-12 py-4 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-on-primary transition-all duration-300">
+                Explore More Gems
+            </button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-lg px-container-margin flex flex-col md:flex-row justify-between items-center gap-md bg-surface-container-low border-t border-outline-variant/20">
+<div class="flex flex-col items-center md:items-start gap-2">
+<div class="font-headline-sm text-headline-sm font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
+                SecondLife
+            </div>
+<p class="font-label-md text-label-md text-on-surface-variant max-w-xs text-center md:text-left">© 2024 SecondLife by Amazon. Circular economy for a greener planet.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-md">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">Sustainability Report</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">How it Works</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">Help Center</a>
+</div>
+<div class="flex gap-4">
+<button class="w-10 h-10 rounded-full bg-surface flex items-center justify-center hover:scale-110 transition-transform shadow-sm">
+<span class="material-symbols-outlined text-secondary">public</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface flex items-center justify-center hover:scale-110 transition-transform shadow-sm">
+<span class="material-symbols-outlined text-secondary">share</span>
+</button>
+</div>
+</footer>
+<script>
+        // Micro-interactions for button press and state management
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.classList.add('scale-95');
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.classList.remove('scale-95');
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.classList.remove('scale-95');
+            });
+        });
+
+        // Simple observer for entrance animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-8');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('article').forEach(card => {
+            card.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-700', 'ease-out');
+            observer.observe(card);
+        });
+    </script>
+</body></html>

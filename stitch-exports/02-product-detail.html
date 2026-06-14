@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Product Detail - SecondLife</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#dce2f7",
+                        "inverse-primary": "#4edea3",
+                        "tertiary-container": "#fc7c78",
+                        "on-secondary-fixed-variant": "#00513b",
+                        "on-tertiary-container": "#711419",
+                        "surface": "#f9f9ff",
+                        "secondary": "#1b6b51",
+                        "surface-variant": "#dce2f7",
+                        "surface-tint": "#006c49",
+                        "secondary-container": "#a6f2d1",
+                        "primary": "#006c49",
+                        "surface-container": "#e9edff",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#3c4a42",
+                        "primary-fixed-dim": "#4edea3",
+                        "surface-dim": "#d3daef",
+                        "on-secondary-container": "#237157",
+                        "primary-container": "#10b981",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#410005",
+                        "surface-container-low": "#f1f3ff",
+                        "on-primary-fixed-variant": "#005236",
+                        "surface-bright": "#f9f9ff",
+                        "inverse-surface": "#293040",
+                        "on-tertiary-fixed-variant": "#842225",
+                        "tertiary-fixed-dim": "#ffb3af",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#a43a3a",
+                        "primary-fixed": "#6ffbbe",
+                        "on-primary-fixed": "#002113",
+                        "secondary-fixed": "#a6f2d1",
+                        "on-primary-container": "#00422b",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#edf0ff",
+                        "background": "#f9f9ff",
+                        "surface-container-high": "#e1e8fd",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#8bd6b6",
+                        "on-background": "#141b2b",
+                        "outline-variant": "#bbcabf",
+                        "on-secondary-fixed": "#002116",
+                        "on-surface": "#141b2b",
+                        "outline": "#6c7a71"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "lg": "40px",
+                        "xl": "64px",
+                        "sm": "12px",
+                        "container-margin": "24px",
+                        "md": "24px",
+                        "xs": "4px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .recessed {
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .btn-hover:hover {
+            transform: scale(1.02);
+            transition: transform 0.2s ease;
+        }
+        .btn-active:active {
+            transform: scale(0.98);
+        }
+        .gauge-track {
+            stroke: #E5E7EB;
+        }
+        .gauge-fill {
+            stroke: url(#gaugeGradient);
+            stroke-dasharray: 219.9;
+            stroke-dashoffset: 17.6; /* Representing 92/100 */
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-container-margin h-16 max-w-7xl mx-auto left-1/2 -translate-x-1/2 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-outline-variant/10 shadow-sm">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">eco</span>
+            SecondLife
+        </div>
+<div class="hidden md:flex items-center gap-md">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Home</a>
+<a class="text-primary dark:text-inverse-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md" href="#">Marketplace</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Dashboard</a>
+</div>
+<div class="flex items-center gap-sm">
+<div class="px-3 py-1 bg-primary-container/10 rounded-full text-primary font-bold text-label-md">
+                💚 450 pts
+            </div>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full border-2 border-primary hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4-0PkPHmpXIO4D-vTiFiLRUOtVHp70_jbzsxOXdB1dQK6e7Wj0i65sIumEyDgWJ9XWFXRQC2Ci09f3moenVUv4Z0YrDeO-YE068v7V9x2wNhCVqD7SVpLiBdW251iIgDmsoeQFmH3YdLc7wXGen3T-atMYyZhn-hyUjNDlskJIRQW1PZt70uw3HTkmnkRG6ojzmBIevdltEgaZuCQ4JuvwsKzUc0K1Yr027__rg4kaZXRNwG8x8PEUsG1Wbgv_zM96QG5HlD3Bdo"/>
+</div>
+</nav>
+<!-- Content Area -->
+<main class="max-w-7xl mx-auto pt-24 pb-xl px-container-margin min-h-screen">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 mb-8 text-on-surface-variant font-label-md">
+<a class="hover:text-primary" href="#">Home</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary" href="#">Marketplace</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface">Refurbished Gear</span>
+</nav>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 md:grid-cols-10 gap-lg">
+<!-- 60% Left: Media Gallery -->
+<div class="md:col-span-6 space-y-md">
+<div class="relative aspect-square bg-surface-container rounded-xl overflow-hidden shadow-sm group">
+<img alt="Premium Refurbished Shoe" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A professional studio shot of a high-end refurbished Nike athletic shoe in vibrant red and white. The lighting is crisp and bright, highlighting the immaculate texture of the recycled mesh and the polished finish of the sole. The setting is a minimalist, modern white studio that feels editorial and premium, with soft ambient shadows that give the shoe a tangible, high-value weight. Emerald green light-mode accents are subtly reflected in the glossy surfaces." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTCs2FheyPzuKnuWlm3x9HEA6X9ZTnAlcEEQbaIlho_J6BalpagKqQ8JXM6mh-jp9UrRxdz9bS-09w2Ooix-yPBg6oFmaHxwvycM_74hGZvfUDiIo8iZlJQ8sRQn7yjgcNQ7Jjmsy-RO6UkwVe2fVeOcv9zZ7fqFNU5IBCRx_CQn_LJDjDez695OvM_GBg9tWmpSs2TVOBI28chYBHOVyVCjAONvx6zAvjurpKyJkVgCDpXtAfvWT4oQ-kFiHv83zWSx9gY-UUl14"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-label-md text-sm glass-effect">Pre-loved</span>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-md text-sm glass-effect">Sustainability Choice</span>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-4">
+<button class="aspect-square bg-surface-container rounded-lg overflow-hidden border-2 border-primary hover:opacity-80 transition-all">
+<img class="w-full h-full object-cover" data-alt="Close-up detail of a refurbished red athletic shoe's heel and stitching, showing high-quality restoration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyO1nz4lhhq58Ob7JfzYBhVvGDhzAXycKACSA7Vr6VGG_ywVY1zZBQur1fnPesb-4LeRurDmT2zusRoxwLnPLKzOyz1MhAeNpIEa2SX-rcn9G26KCND0kj3VtljPW359X3jktFP6jkpk5D5jbCNVVjnBjsVIt1TZPaPGDiHCqkd-HUrzV5xmMvzXH-dx78ERZ0NW9uNsm-dQk5SU2ZxORdGTvCwGZpvTjDUUkfn54v-C4OblGoX1Yh3qL_BL32UoTU_hVFL9Zcm8c"/>
+</button>
+<button class="aspect-square bg-surface-container rounded-lg overflow-hidden border border-outline-variant hover:opacity-80 transition-all">
+<img class="w-full h-full object-cover" data-alt="Side profile of a premium neon green sneaker on a clean white surface with modern soft shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApbriCdyoGJvXY9fq7dxfIhPWBp_jlbYm5vOl4JQthJzdC84rYk4LNbsNM5JmP-wdmXlD-_W8nfj5NGELu1KW4KPAnCoUIwXi0cH8ZbhVscIRxfG_ZwLq9XixICKdUfxqvuY7-T7eduIG7y-vG4qaPDUAsXTPz0Z5SCFOnX9MGVZ0I631uUGgj1zxLcUzJz-SMs_pVyPtxbTQaPi3HUI4K5ws9Q2JFs0EOIMdsf5GV-qiC9N2V_G7rK2YqO2RZKTWQHvcTrb_tc08"/>
+</button>
+<button class="aspect-square bg-surface-container rounded-lg overflow-hidden border border-outline-variant hover:opacity-80 transition-all">
+<img class="w-full h-full object-cover" data-alt="A birds-eye view of a collection of sustainable footwear accessories in a minimalist, high-key studio environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvH-G9sHnKEFL8vgH_TB6WWkVS-PtG31dGHNikCvrrS-TfRHJPjOVI1WdxxAtfNlzCKkU30C07RpHDPgmE1YddvDUed9U83hT72DVjk3JHOtePUFZH6KLmrV1ob6fuezSMURBtFXC4g6cFZLG1TVmCEdTo0uRGvJ9LU3hqmoR2c8MKGBrEO-h7W6-qv8no1OogNzGyidboVpxlFCkTl7wdwktxBXZtZFgO8T4LStqPpGgg1Hs-fJG880ffOoYlH2TZh_K_bttXXk8"/>
+</button>
+<div class="aspect-square bg-surface-container-highest rounded-lg flex items-center justify-center cursor-pointer hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-primary">add_a_photo</span>
+<span class="ml-1 text-label-md text-primary">+4</span>
+</div>
+</div>
+</div>
+<!-- 40% Right: Product Info & Actions -->
+<div class="md:col-span-4 flex flex-col gap-md">
+<section>
+<h1 class="font-headline-lg text-headline-lg font-extrabold text-on-surface tracking-tight">Eco-Runner Pro 2024</h1>
+<div class="flex items-center gap-2 mt-2">
+<div class="flex text-amber-500">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">star_half</span>
+</div>
+<span class="font-label-md text-on-surface">4.2</span>
+<span class="text-on-surface-variant font-label-md">(1.2k Reviews)</span>
+</div>
+<div class="mt-4 flex items-baseline gap-2">
+<span class="text-headline-md font-bold text-on-surface">₹12,499</span>
+<span class="text-body-md text-on-surface-variant line-through">₹20,499</span>
+<span class="text-primary font-bold text-label-md">39% OFF</span>
+</div>
+</section>
+<!-- Return Risk Banner -->
+<div class="p-md rounded-xl bg-gradient-to-r from-amber-50 to-red-50 border border-amber-200 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-amber-200/20 blur-2xl rounded-full"></div>
+<div class="flex gap-sm items-start relative z-10">
+<span class="material-symbols-outlined text-amber-600 mt-0.5">warning</span>
+<div class="flex-1">
+<h3 class="font-label-md text-amber-900">28% of buyers return this product</h3>
+<p class="text-body-md text-amber-800/80 mt-1">Common reason: <span class="font-bold">Runs small in fit</span>. We recommend ordering a half-size up to avoid the hassle of returns.</p>
+<button class="mt-3 text-amber-700 font-label-md flex items-center gap-1 hover:underline">
+                                View Size Guide <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Certified Refurbished Card -->
+<div class="p-md rounded-xl border-2 border-primary bg-surface shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">verified</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Certified Refurbished</span>
+</div>
+<p class="mt-2 text-primary font-bold font-label-md">Save ₹8,000 + Earn 150 Credits</p>
+</div>
+<!-- Condition Gauge -->
+<div class="relative w-16 h-16">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="gauge-track" cx="32" cy="32" fill="transparent" r="28" stroke-width="4"></circle>
+<circle class="gauge-fill" cx="32" cy="32" fill="transparent" r="28" stroke-linecap="round" stroke-width="4"></circle>
+<defs>
+<lineargradient id="gaugeGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" stop-color="#fbbf24"></stop>
+<stop offset="100%" stop-color="#10b981"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-bold text-xs text-on-surface">92</span>
+<span class="text-[8px] uppercase tracking-tighter text-on-surface-variant">Excellent</span>
+</div>
+</div>
+</div>
+<div class="mt-4 p-sm bg-surface-container-low rounded-lg border border-outline-variant/30 text-body-md text-on-surface-variant italic">
+                        "AI-graded: Excellent (92/100). No visible scratches beyond 15cm. Professionally sanitized."
+                    </div>
+</div>
+<!-- Purchase Actions -->
+<div class="flex flex-col gap-sm pt-4">
+<button class="w-full h-14 bg-primary text-on-primary rounded-xl font-bold text-body-lg flex items-center justify-center gap-2 shadow-lg btn-hover btn-active transition-all">
+<span class="material-symbols-outlined">shopping_cart</span>
+                        Buy Now
+                    </button>
+<button class="w-full h-14 border-2 border-error text-error bg-transparent rounded-xl font-bold text-body-lg flex items-center justify-center gap-2 btn-hover btn-active transition-all">
+<span class="material-symbols-outlined">assignment_return</span>
+                        Return This Item
+                    </button>
+<p class="text-center font-label-md text-on-surface-variant mt-2 flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px]">eco</span>
+                        Purchasing this saves 4.5kg of CO2 emissions.
+                    </p>
+</div>
+</div>
+</div>
+<!-- Asymmetric Detail Section (Bento Grid) -->
+<section class="mt-xl grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="md:col-span-2 p-xl rounded-2xl bg-inverse-surface text-surface flex flex-col justify-center relative overflow-hidden group">
+
+<div class="relative z-10">
+<h2 class="font-display-lg text-display-lg mb-4">Circular Journey</h2>
+<p class="font-body-lg text-surface/80 max-w-lg">Track the entire history of this pair. From its first life to our rigorous 32-point inspection and restoration process. This is the future of conscious consumption.</p>
+<button class="mt-lg px-6 py-3 bg-primary-container text-on-primary-container rounded-full font-bold flex items-center gap-2 w-fit btn-hover shadow-xl">
+                        View Blockchain Trace
+                        <span class="material-symbols-outlined">history_edu</span>
+</button>
+</div>
+</div>
+<div class="space-y-md">
+<div class="p-md rounded-2xl bg-surface shadow-sm border border-outline-variant/20 flex items-center gap-4 group hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">package_2</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Plastic-free packaging</h4>
+<p class="text-label-md text-on-surface-variant">Shipped in mushroom foam</p>
+</div>
+</div>
+<div class="p-md rounded-2xl bg-surface shadow-sm border border-outline-variant/20 flex items-center gap-4 group hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">sync</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Buyback Guarantee</h4>
+<p class="text-label-md text-on-surface-variant">Resell back to us for ₹3,000</p>
+</div>
+</div>
+<div class="p-md rounded-2xl bg-surface shadow-sm border border-outline-variant/20 flex items-center gap-4 group hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">support_agent</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Repair Support</h4>
+<p class="text-label-md text-on-surface-variant">Free outsole repairs for 1 year</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-lg px-container-margin flex flex-col md:flex-row justify-between items-center gap-md bg-surface-container-low dark:bg-inverse-surface border-t border-outline-variant/20">
+<div class="font-headline-sm text-headline-sm font-bold text-primary">
+            SecondLife
+        </div>
+<div class="flex flex-wrap justify-center gap-md">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-secondary hover:underline transition-all font-label-md text-label-md" href="#">Sustainability Report</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-secondary hover:underline transition-all font-label-md text-label-md" href="#">How it Works</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-secondary hover:underline transition-all font-label-md text-label-md" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-secondary hover:underline transition-all font-label-md text-label-md" href="#">Help Center</a>
+</div>
+<div class="text-on-surface-variant dark:text-surface-variant font-label-md text-label-md opacity-60">
+            © 2024 SecondLife by Amazon. Circular economy for a greener planet.
+        </div>
+</footer>
+<script>
+        // Simple Interaction: Thumbnail switching
+        const thumbnails = document.querySelectorAll('.grid-cols-4 button');
+        const mainImage = document.querySelector('.md\\:col-span-6 img');
+        
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                const newSrc = thumb.querySelector('img').src;
+                const newAlt = thumb.querySelector('img').getAttribute('data-alt');
+                mainImage.src = newSrc;
+                mainImage.setAttribute('data-alt', newAlt);
+                
+                // Update border
+                thumbnails.forEach(t => t.classList.remove('border-primary'));
+                thumbnails.forEach(t => t.classList.add('border-outline-variant'));
+                thumb.classList.remove('border-outline-variant');
+                thumb.classList.add('border-primary');
+            });
+        });
+    </script>
+</body></html>

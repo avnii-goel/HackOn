@@ -18,18 +18,12 @@ interface Product {
 }
 
 const fallbackProducts: Product[] = [
-  { id: "1", name: "Sony WH-1000XM5 Headphones", category: "electronics", price: 29990, image_url: null, return_rate: 18, refurb_price: 21990 },
-  { id: "2", name: "Nike Air Max Running Shoes", category: "clothing", price: 8995, image_url: null, return_rate: 34, refurb_price: 5995 },
-  { id: "3", name: "Apple iPad 10th Gen", category: "electronics", price: 44900, image_url: null, return_rate: 12, refurb_price: 32900 },
-  { id: "4", name: "Prestige Pressure Cooker 5L", category: "home", price: 2499, image_url: null, return_rate: 8 },
-  { id: "5", name: "Atomic Habits", category: "books", price: 399, image_url: null, return_rate: 5 },
-  { id: "6", name: "Nivia Football Size 5", category: "sports", price: 1299, image_url: null, return_rate: 15, refurb_price: 799 },
-  { id: "7", name: "Dyson V15 Detect Vacuum", category: "home", price: 64900, image_url: null, return_rate: 22, refurb_price: 52000 },
-  { id: "8", name: "PlayStation 5 Console", category: "electronics", price: 49990, image_url: null, return_rate: 9, refurb_price: 43990 },
-  { id: "9", name: "Lululemon Yoga Mat", category: "sports", price: 6500, image_url: null, return_rate: 11, refurb_price: 4500 },
-  { id: "10", name: "Kindle Paperwhite Signature", category: "electronics books", price: 17999, image_url: null, return_rate: 6, refurb_price: 14999 },
-  { id: "11", name: "Bamboo Toothbrush 4-Pack", category: "eco picks home", price: 399, image_url: null, return_rate: 2 },
-  { id: "12", name: "Levis 501 Original Jeans", category: "clothing", price: 3500, image_url: null, return_rate: 42, refurb_price: 2100 },
+  { id: "49a5bb33-491a-40fd-8bf8-3c7ae1742ba8", name: "Sony WH-1000XM5 Headphones", category: "electronics", price: 29990, image_url: null, return_rate: 18, refurb_price: 21990 },
+  { id: "845b773e-9cd6-44c4-8228-cf68fc9db0e0", name: "Nike Air Max Running Shoes", category: "clothing", price: 8995, image_url: null, return_rate: 34, refurb_price: 5995 },
+  { id: "38a3d713-1025-4c44-96a0-714c9b6f7e98", name: "Apple iPad 10th Gen", category: "electronics", price: 44900, image_url: null, return_rate: 12, refurb_price: 32900 },
+  { id: "d3ed85f7-d2ff-4a7f-800d-7dca16c5534b", name: "Prestige Pressure Cooker 5L", category: "home", price: 2499, image_url: null, return_rate: 8 },
+  { id: "f1a45e60-5279-414c-906b-2462b8298036", name: "Atomic Habits Book", category: "books", price: 399, image_url: null, return_rate: 5 },
+  { id: "f0ca88ae-487a-45fd-9e09-e14b6364a4e5", name: "Nivia Football Size 5", category: "sports", price: 1299, image_url: null, return_rate: 15, refurb_price: 799 },
 ];
 
 const CATEGORY_FILTERS = ["All", "Electronics", "Clothing", "Home", "Books", "Sports", "Eco Picks"];
@@ -207,12 +201,18 @@ export default function LandingPage() {
           </div>
 
           {/* CTAs */}
-          <div className="animate-fade-in-up stagger-5 flex flex-wrap gap-4">
+          <div className="animate-fade-in-up stagger-5 flex flex-col sm:flex-row gap-3 flex-wrap">
             <button
-              onClick={() => router.push('/product/' + (products[0]?.id || '1'))}
-              className="shimmer-btn relative overflow-hidden bg-gradient-to-r from-slc-amber via-yellow-400 to-slc-amber text-slc-ink font-bold px-8 py-4 rounded-xl text-base glow-amber hover:scale-[1.03] active:scale-[0.97] transition-transform"
+              onClick={() => router.push('/sell')}
+              className="shimmer-btn relative overflow-hidden bg-gradient-to-r from-slc-amber via-yellow-400 to-slc-amber text-slc-ink font-bold px-8 py-4 rounded-xl text-base hover:scale-[1.03] active:scale-[0.97] transition-transform"
             >
-              Start a Return — Earn Credits →
+              📸 Sell My Used Item →
+            </button>
+            <button
+              onClick={() => router.push('/return/49a5bb33-491a-40fd-8bf8-3c7ae1742ba8')}
+              className="glass text-white font-semibold px-8 py-4 rounded-xl text-base hover:bg-white/15 transition-colors border border-white/20"
+            >
+              ↩ Return a Purchase
             </button>
             <button
               onClick={() => router.push('/marketplace')}
@@ -443,7 +443,7 @@ export default function LandingPage() {
                     <ProductCard
                       product={productShape}
                       isMarketplace={true}
-                      onClick={() => router.push(`/marketplace/${listing.id}`)}
+                      onClick={() => router.push(`/product/${listing.id}`)}
                     />
                   </div>
                 </div>

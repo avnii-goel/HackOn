@@ -86,6 +86,17 @@ def get_product(product_id: str) -> dict:
         raise Exception(f"Failed to get product {product_id}: {str(e)}")
 
 
+def get_product_by_index(index: int) -> dict:
+    try:
+        response = supabase.schema("public").table("products").select("*").execute()
+        products = response.data
+        if index < 1 or index > len(products):
+            return products[0] if products else None
+        return products[index - 1]
+    except Exception as e:
+        raise Exception(f"Failed to get product by index: {str(e)}")
+
+
 def get_all_products() -> list:
     try:
         response = supabase.schema("public").table("products").select("*").execute()

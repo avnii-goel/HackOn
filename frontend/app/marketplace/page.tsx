@@ -207,7 +207,7 @@ function MarketplaceContent() {
                   product={productShape}
                   isMarketplace={true}
                   isExpanded={expandedId === listing.id}
-                  onClick={() => setExpandedId(listing.id)}
+                  onClick={() => router.push(`/product/${listing.id}`)}
                   onCollapse={() => setExpandedId(null)}
                   onPurchase={() => handlePurchase(listing.id)}
                 />

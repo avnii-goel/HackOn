@@ -73,7 +73,7 @@ export default function Navbar() {
         const res = await fetch(`${API_URL}/credits/wallet/${userId}`);
         if (res.ok) {
           const data = await res.json();
-          setCredits(data.balance);
+          setCredits(data.credits_balance || 0);
         }
       } catch (err) {
         console.warn("Could not fetch credits");

@@ -1,73 +1,97 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 interface Transaction {
   id: string;
-  type: "purchase" | "resell" | "bonus";
-  credits: number;
-  description: string;
+  user_id: string;
+  action_type: string;
+  credits_earned: number;
+  listing_id: string | null;
   created_at: string;
 }
 
-interface Wallet {
-  user_id: string;
-  balance: number;
-  transactions?: Transaction[];
-}
-
-interface LeaderboardEntry {
-  user_id: string;
+interface User {
+  id: string;
   name: string;
-  total_credits: number;
+  email: string;
+  credits_balance: number;
   co2_saved_kg: number;
-  rank: number;
+  created_at: string;
 }
 
-// Fallbacks
-const fallbackWallet: Wallet = {
-  user_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  balance: 450,
-  transactions: [
-    { id: "tx1", type: "resell", credits: 200, description: "Resold Sony Headphones", created_at: new Date().toISOString() },
-    { id: "tx2", type: "purchase", credits: -50, description: "Purchased Atomic Habits", created_at: new Date(Date.now() - 86400000).toISOString() },
-    { id: "tx3", type: "bonus", credits: 300, description: "Welcome Bonus", created_at: new Date(Date.now() - 172800000).toISOString() },
-  ]
-};
+interface WalletData {
+  user: User;
+  credits_balance: number;
+  co2_saved_kg: number;
+  transaction_history: Transaction[];
+  leaderboard_rank: number | null;
+  total_transactions: number;
+}
 
-const fallbackLeaderboard: LeaderboardEntry[] = [
-  { user_id: "u1", name: "Ananya", total_credits: 3200, co2_saved_kg: 84.5, rank: 1 },
-  { user_id: "u2", name: "Rahul", total_credits: 2850, co2_saved_kg: 62.0, rank: 2 },
-  { user_id: "u3", name: "Meera", total_credits: 1950, co2_saved_kg: 41.2, rank: 3 },
-  { user_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890", name: "Priya", total_credits: 450, co2_saved_kg: 12.5, rank: 4 },
-  { user_id: "u5", name: "Karan", total_credits: 120, co2_saved_kg: 3.1, rank: 5 },
-];
+interface LeaderboardUser {
+  id: string;
+  name: string;
+  credits_balance: number;
+  co2_saved_kg: number;
+}
+
+function getActionIcon(type: string): string {
+  switch (type) {
+    case "resell_submitted": return "🏷️";
+    case "refurb_purchased": return "🔧";
+    case "donated": return "🎁";
+    case "purchase": return "🛒";
+    case "normal_return": return "↩️";
+    default: return "💚";
+  }
+}
+
+function getActionLabel(type: string): string {
+  switch (type) {
+    case "resell_submitted": return "Item Listed for Resell";
+    case "refurb_purchased": return "Refurbished Purchase";
+    case "donated": return "Item Donated";
+    case "purchase": return "Marketplace Purchase";
+    case "normal_return": return "Standard Return";
+    default: return type.replace(/_/g, " ");
+  }
+}
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diff = now.getTime() - d.getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days === 0) return "Today";
+  if (days === 1) return "Yesterday";
+  if (days < 7) return `${days} days ago`;
+  return d.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
+}
 
 export default function DashboardPage() {
   const router = useRouter();
-  
-  const [wallet, setWallet] = useState<Wallet | null>(null);
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [wallet, setWallet] = useState<WalletData | null>(null);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [animCredits, setAnimCredits] = useState(0);
+  const animRef = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       const userId = localStorage.getItem("slc_user_id") || "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
-      
       try {
-        const wRes = await fetch(`${API_URL}/credits/wallet/${userId}`);
-        const wData = wRes.ok ? await wRes.json() : fallbackWallet;
-        setWallet(wData);
-
-        const lRes = await fetch(`${API_URL}/credits/leaderboard`);
-        const lData = lRes.ok ? await lRes.json() : fallbackLeaderboard;
-        setLeaderboard(lData);
-      } catch (err) {
-        setWallet(fallbackWallet);
-        setLeaderboard(fallbackLeaderboard);
+        const [wRes, lRes] = await Promise.all([
+          fetch(`${API_URL}/credits/wallet/${userId}`),
+          fetch(`${API_URL}/credits/leaderboard`),
+        ]);
+        if (wRes.ok) setWallet(await wRes.json());
+        if (lRes.ok) setLeaderboard(await lRes.json());
+      } catch {
+        // Fallback handled by null check
       } finally {
         setLoading(false);
       }
@@ -75,226 +99,284 @@ export default function DashboardPage() {
     fetchData();
   }, []);
 
+  // Animated counter
+  useEffect(() => {
+    if (!wallet) return;
+    const target = wallet.credits_balance;
+    const start = performance.now();
+    const duration = 1500;
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / duration, 1);
+      setAnimCredits(Math.floor(p * p * target)); // ease-in
+      if (p < 1) animRef.current = requestAnimationFrame(tick);
+    };
+    animRef.current = requestAnimationFrame(tick);
+    return () => { if (animRef.current) cancelAnimationFrame(animRef.current); };
+  }, [wallet]);
+
   if (loading) {
-    return <div className="min-h-screen pt-24 bg-slc-cloud text-center font-bold text-slc-steel">Loading dashboard...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slc-cloud to-white">
+        <div className="bg-gradient-to-r from-slc-leaf to-slc-leaf-dark py-16 px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="h-8 w-64 bg-white/20 rounded animate-pulse mb-3" />
+            <div className="h-5 w-96 bg-white/10 rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="max-w-5xl mx-auto px-4 -mt-8">
+          <div className="grid grid-cols-4 gap-4">
+            {[1,2,3,4].map(i => <div key={i} className="h-28 bg-white rounded-2xl animate-pulse border border-slc-divider/50" />)}
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  if (!wallet) return null;
+  if (!wallet) {
+    return (
+      <div className="min-h-screen bg-slc-cloud flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-4xl mb-4">⚠️</p>
+          <h2 className="text-xl font-bold">Could not load dashboard</h2>
+          <button onClick={() => router.push("/")} className="mt-4 bg-slc-leaf text-white px-6 py-2 rounded-xl font-bold">Go Home</button>
+        </div>
+      </div>
+    );
+  }
 
-  const userId = localStorage.getItem("slc_user_id") || "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
-  const currentUser = leaderboard.find(l => l.user_id === userId) || fallbackLeaderboard[3];
-  
-  // Level calculation
-  const credits = wallet.balance;
-  let levelName = "Seedling";
-  let nextLevel = "Sapling";
-  let threshold = 100;
-  let emoji = "🌱";
-  
-  if (credits >= 1000) { levelName = "Forest"; nextLevel = "Max"; threshold = credits; emoji = "🌳"; }
-  else if (credits >= 500) { levelName = "Tree"; nextLevel = "Forest"; threshold = 1000; emoji = "🌲"; }
-  else if (credits >= 100) { levelName = "Sapling"; nextLevel = "Tree"; threshold = 500; emoji = "🌿"; }
+  const userId = localStorage.getItem("slc_user_id") || "";
+  const co2 = Number(wallet.co2_saved_kg) || 0;
+  const credits = wallet.credits_balance || 0;
+  const rank = wallet.leaderboard_rank || 0;
+  const transactions = wallet.transaction_history || [];
+  const userName = wallet.user?.name || "Shourya";
 
-  const progressPct = Math.min(100, Math.max(0, (credits / threshold) * 100));
-  const co2 = currentUser.co2_saved_kg;
+  // Level system
+  let level = "Seedling 🌱";
+  let nextThreshold = 500;
+  if (credits >= 2000) { level = "Forest 🌳"; nextThreshold = credits; }
+  else if (credits >= 1000) { level = "Tree 🌲"; nextThreshold = 2000; }
+  else if (credits >= 500) { level = "Sapling 🌿"; nextThreshold = 1000; }
+  const progressPct = Math.min(100, (credits / nextThreshold) * 100);
 
   return (
-    <div className="bg-slc-cloud min-h-screen pb-16">
-      
-      {/* WELCOME HEADER */}
-      <div className="bg-slc-bark text-white px-4 md:px-8 py-10">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-2">Good morning, {currentUser.name} 👋</h1>
-          <p className="text-white/70 mb-6">Here&apos;s your SecondLife impact this month</p>
-          
-          <div className="flex flex-wrap gap-4">
-            <div className="bg-white/10 border border-white/20 rounded-xl px-5 py-3 shadow-sm">
-              <span className="text-slc-leaf-light font-bold">💚 {wallet.balance} pts</span>
+    <div className="min-h-screen bg-gradient-to-b from-slc-cloud via-white to-slc-cloud pb-16">
+      {/* Hero Header */}
+      <div className="bg-gradient-to-r from-slc-leaf via-slc-leaf-dark to-emerald-900 text-white py-12 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="w-full h-full" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+        </div>
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-2xl font-bold border border-white/30">
+              {userName.charAt(0)}
             </div>
-            <div className="bg-white/10 border border-white/20 rounded-xl px-5 py-3 shadow-sm">
-              <span className="text-white font-bold">☁️ {co2} kg CO₂</span>
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight">Hey, {userName}! 👋</h1>
+              <p className="text-white/70 text-sm font-medium">Your SecondLife impact dashboard</p>
             </div>
-            <div className="bg-white/10 border border-white/20 rounded-xl px-5 py-3 shadow-sm">
-              <span className="text-slc-amber font-bold">🏆 Rank #{currentUser.rank}</span>
+          </div>
+          <div className="flex flex-wrap gap-3 mt-4">
+            <div className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold">
+              🏆 Rank #{rank}
+            </div>
+            <div className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold">
+              {level}
+            </div>
+            <div className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold">
+              {transactions.length} actions taken
             </div>
           </div>
         </div>
       </div>
 
-      {/* 3-COL MAIN CONTENT */}
-      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        {/* LEFT SIDEBAR (Profile + Quick Actions) */}
-        <div className="col-span-1 lg:col-span-3 space-y-6">
-          
-          {/* User Profile */}
-          <div className="bg-white rounded-xl border border-slc-divider p-6 shadow-sm">
-            <div className="flex flex-col items-center mb-6 text-center">
-              <div className="w-16 h-16 bg-purple-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mb-3 shadow-md border-2 border-slc-divider/50">
-                {currentUser.name.charAt(0)}
-              </div>
-              <h2 className="text-lg font-bold text-slc-ink">{currentUser.name}</h2>
-              <span className="bg-slc-leaf-light text-slc-leaf text-xs font-bold px-3 py-1 rounded-full mt-1 border border-slc-leaf/20">
-                Level: {levelName}
-              </span>
-            </div>
-
-            <div className="mb-2">
-              <div className="flex justify-between text-xs font-bold text-slc-ink mb-1.5">
-                <span>XP Progress</span>
-                <span className="text-slc-leaf">{Math.round(progressPct)}%</span>
-              </div>
-              <div className="h-2.5 bg-slc-smoke rounded-full overflow-hidden">
-                <div className="h-full bg-slc-leaf transition-all duration-1000 ease-out" style={{ width: `${progressPct}%` }} />
-              </div>
-              <p className="text-[11px] text-slc-steel text-center mt-2 font-medium">
-                {credits} / {threshold} to {nextLevel}
-              </p>
-            </div>
+      <div className="max-w-5xl mx-auto px-4 -mt-8 relative z-10">
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+          <div className="bg-white rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
+            <p className="text-3xl font-extrabold text-slc-leaf font-mono leading-none">{animCredits}</p>
+            <p className="text-[10px] font-bold text-slc-steel uppercase mt-2 tracking-wider">Green Credits</p>
           </div>
-
-          {/* Quick Actions */}
-          <div className="bg-white rounded-xl border border-slc-divider overflow-hidden shadow-sm">
-            <button onClick={() => router.push('/product/1')} className="w-full flex items-center gap-3 px-6 py-4 border-b border-slc-divider hover:bg-slc-cloud transition-colors text-left group">
-              <span className="text-slc-leaf text-xl group-hover:scale-110 transition-transform">↩</span>
-              <span className="text-sm font-bold text-slc-ink">Return an Item</span>
-            </button>
-            <button onClick={() => router.push('/marketplace')} className="w-full flex items-center gap-3 px-6 py-4 border-b border-slc-divider hover:bg-slc-cloud transition-colors text-left group">
-              <span className="text-slc-amber text-xl group-hover:scale-110 transition-transform">🛍️</span>
-              <span className="text-sm font-bold text-slc-ink">Browse Marketplace</span>
-            </button>
-            <button className="w-full flex items-center gap-3 px-6 py-4 hover:bg-slc-cloud transition-colors text-left group">
-              <span className="text-slc-sky text-xl group-hover:scale-110 transition-transform">📋</span>
-              <span className="text-sm font-bold text-slc-ink">View All Transactions</span>
-            </button>
+          <div className="bg-white rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
+            <p className="text-3xl font-extrabold text-sky-600 font-mono leading-none">{co2}</p>
+            <p className="text-[10px] font-bold text-slc-steel uppercase mt-2 tracking-wider">kg CO₂ Saved</p>
+          </div>
+          <div className="bg-white rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
+            <p className="text-3xl font-extrabold text-amber-500 font-mono leading-none">#{rank}</p>
+            <p className="text-[10px] font-bold text-slc-steel uppercase mt-2 tracking-wider">Leaderboard</p>
+          </div>
+          <div className="bg-white rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
+            <p className="text-3xl font-extrabold text-purple-600 font-mono leading-none">{transactions.length}</p>
+            <p className="text-[10px] font-bold text-slc-steel uppercase mt-2 tracking-wider">Total Actions</p>
           </div>
         </div>
 
-        {/* CENTER MAIN */}
-        <div className="col-span-1 lg:col-span-6 space-y-6">
-          
-          {/* CO2 Impact SVG */}
-          <div className="bg-white rounded-xl border border-slc-divider p-8 shadow-sm text-center">
-            <h2 className="text-xl font-bold text-slc-ink mb-6">🌍 Your Environmental Impact</h2>
-            
-            <div className="flex justify-center mb-8 relative">
-              <svg width="200" height="200" viewBox="0 0 200 200" className="drop-shadow-sm">
-                <circle cx="100" cy="100" r="85" fill="none" stroke="var(--color-slc-smoke)" strokeWidth="14" />
-                <circle 
-                  cx="100" cy="100" r="85" fill="none" stroke="var(--color-slc-leaf)" strokeWidth="14"
-                  strokeDasharray={`${2 * Math.PI * 85}`} 
-                  strokeDashoffset={`${2 * Math.PI * 85 * (1 - Math.min(co2/50, 1))}`}
-                  strokeLinecap="round" transform="rotate(-90, 100, 100)"
-                  className="transition-all duration-1000 ease-out"
-                />
-                <text x="100" y="95" textAnchor="middle" className="text-4xl font-bold font-mono fill-slc-ink">
-                  {co2}
-                </text>
-                <text x="100" y="120" textAnchor="middle" className="text-xs font-bold fill-slc-steel">
-                  kg CO₂ saved
-                </text>
-              </svg>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* CO₂ Impact Visualization */}
+            <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-slc-leaf/5 to-sky-500/5 px-6 py-4 border-b border-slc-divider/30">
+                <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
+                  <span className="w-8 h-8 bg-slc-leaf/10 rounded-lg flex items-center justify-center">🌍</span>
+                  Environmental Impact
+                </h2>
+              </div>
+              <div className="p-6">
+                <div className="flex items-center justify-center mb-6">
+                  <div className="relative w-44 h-44">
+                    <svg width="176" height="176" viewBox="0 0 176 176" className="drop-shadow-sm">
+                      <circle cx="88" cy="88" r="75" fill="none" stroke="#EAEDED" strokeWidth="12" />
+                      <circle cx="88" cy="88" r="75" fill="none" stroke="#067D62" strokeWidth="12"
+                        strokeDasharray={`${2 * Math.PI * 75}`}
+                        strokeDashoffset={`${2 * Math.PI * 75 * (1 - Math.min(co2 / 20, 1))}`}
+                        strokeLinecap="round" transform="rotate(-90, 88, 88)"
+                        className="transition-all duration-[2s] ease-out"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-4xl font-extrabold text-slc-ink font-mono">{co2}</span>
+                      <span className="text-xs font-bold text-slc-steel">kg CO₂</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-slc-cloud/70 rounded-xl p-3 text-center border border-slc-divider/30">
+                    <p className="text-xl mb-0.5">🌳</p>
+                    <p className="text-lg font-extrabold text-slc-ink font-mono">{Math.round(co2 * 0.5)}</p>
+                    <p className="text-[9px] font-bold text-slc-steel uppercase tracking-wider">Trees Equiv.</p>
+                  </div>
+                  <div className="bg-slc-cloud/70 rounded-xl p-3 text-center border border-slc-divider/30">
+                    <p className="text-xl mb-0.5">🚗</p>
+                    <p className="text-lg font-extrabold text-slc-ink font-mono">{Math.round(co2 * 4)}</p>
+                    <p className="text-[9px] font-bold text-slc-steel uppercase tracking-wider">Km Saved</p>
+                  </div>
+                  <div className="bg-slc-cloud/70 rounded-xl p-3 text-center border border-slc-divider/30">
+                    <p className="text-xl mb-0.5">💡</p>
+                    <p className="text-lg font-extrabold text-slc-ink font-mono">{Math.round(co2 * 12)}</p>
+                    <p className="text-[9px] font-bold text-slc-steel uppercase tracking-wider">Hrs LED</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-slc-cloud rounded-xl p-3 border border-slc-divider/50">
-                <p className="text-2xl mb-1">🌳</p>
-                <p className="font-bold text-slc-ink">{Math.round(co2 * 0.5)}</p>
-                <p className="text-[10px] text-slc-steel font-bold uppercase tracking-wider">Trees</p>
+            {/* Transaction History */}
+            <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-amber-500/5 to-slc-leaf/5 px-6 py-4 border-b border-slc-divider/30">
+                <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
+                  <span className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center">📋</span>
+                  Recent Activity
+                </h2>
               </div>
-              <div className="bg-slc-cloud rounded-xl p-3 border border-slc-divider/50">
-                <p className="text-2xl mb-1">🚗</p>
-                <p className="font-bold text-slc-ink">{Math.round(co2 * 4)}</p>
-                <p className="text-[10px] text-slc-steel font-bold uppercase tracking-wider">Km Less</p>
-              </div>
-              <div className="bg-slc-cloud rounded-xl p-3 border border-slc-divider/50">
-                <p className="text-2xl mb-1">💡</p>
-                <p className="font-bold text-slc-ink">{Math.round(co2 * 12)}</p>
-                <p className="text-[10px] text-slc-steel font-bold uppercase tracking-wider">Hrs LED</p>
+              <div className="divide-y divide-slc-divider/50">
+                {transactions.length === 0 ? (
+                  <div className="p-10 text-center">
+                    <p className="text-3xl mb-2">📭</p>
+                    <p className="text-slc-steel font-medium">No activity yet. Start by listing an item!</p>
+                  </div>
+                ) : (
+                  transactions.slice(0, 8).map((tx, i) => (
+                    <div key={tx.id || i} className="flex items-center gap-4 px-6 py-4 hover:bg-slc-cloud/30 transition-colors">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 ${
+                        tx.credits_earned > 0 ? "bg-slc-leaf/10" : "bg-red-50"
+                      }`}>
+                        {getActionIcon(tx.action_type)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-slc-ink truncate">{getActionLabel(tx.action_type)}</p>
+                        <p className="text-xs text-slc-steel font-medium">{formatDate(tx.created_at)}</p>
+                      </div>
+                      <div className={`font-extrabold font-mono text-sm ${
+                        tx.credits_earned > 0 ? "text-slc-leaf" : "text-red-500"
+                      }`}>
+                        {tx.credits_earned > 0 ? "+" : ""}{tx.credits_earned} pts
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
 
-          {/* Transactions */}
-          <div className="bg-white rounded-xl border border-slc-divider p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-slc-ink mb-4">Recent Activity</h2>
-            <div className="space-y-0">
-              {(wallet.transactions || []).length === 0 ? (
-                <p className="text-center text-slc-steel py-6 font-medium">No transactions yet.</p>
-              ) : (
-                (wallet.transactions || []).map((tx, idx) => (
-                  <div key={tx.id || idx} className="flex items-center gap-4 py-4 border-b border-slc-divider last:border-0 hover:bg-slc-cloud/50 transition-colors px-2 rounded-lg">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                      tx.credits >= 0 ? "bg-slc-leaf-light text-slc-leaf" : "bg-red-50 text-red-500"
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Credits Wallet */}
+            <div className="bg-gradient-to-br from-slc-leaf via-slc-leaf-dark to-emerald-900 text-white rounded-2xl p-6 shadow-lg relative overflow-hidden">
+              <div className="absolute inset-0 opacity-10">
+                <div className="w-full h-full" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
+              </div>
+              <div className="relative z-10">
+                <p className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Green Credits</p>
+                <p className="text-4xl font-extrabold font-mono">{credits}</p>
+                <div className="mt-4">
+                  <div className="flex justify-between text-xs font-semibold mb-1.5">
+                    <span className="text-white/70">{level}</span>
+                    <span className="text-white/90">{Math.round(progressPct)}%</span>
+                  </div>
+                  <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div className="h-full bg-white/80 rounded-full transition-all duration-1000" style={{ width: `${progressPct}%` }} />
+                  </div>
+                  <p className="text-[10px] text-white/50 mt-1.5 text-center font-medium">
+                    {nextThreshold - credits} pts to next level
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Leaderboard */}
+            <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-amber-500/5 to-orange-500/5 px-5 py-3 border-b border-slc-divider/30">
+                <h3 className="font-bold text-slc-ink flex items-center gap-2">
+                  🏆 Green Champions
+                </h3>
+              </div>
+              <div className="p-3">
+                {leaderboard.map((user, idx) => {
+                  const isMe = user.id === userId;
+                  return (
+                    <div key={user.id} className={`flex items-center gap-3 py-2.5 px-3 rounded-xl transition-colors ${
+                      isMe ? "bg-slc-leaf/10 border border-slc-leaf/20" : "hover:bg-slc-cloud/50"
                     }`}>
-                      {tx.type === "resell" ? "🔄" : tx.type === "purchase" ? "🛍️" : "🎁"}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-bold text-slc-ink">{tx.description}</p>
-                      <p className="text-xs text-slc-steel mt-0.5">{new Date(tx.created_at).toLocaleDateString()}</p>
-                    </div>
-                    <div className={`font-bold font-mono ${tx.credits >= 0 ? "text-slc-leaf" : "text-red-500"}`}>
-                      {tx.credits > 0 ? "+" : ""}{tx.credits}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDEBAR (Leaderboard & Level) */}
-        <div className="col-span-1 lg:col-span-3 space-y-6">
-          
-          <div className="bg-white rounded-xl border border-slc-divider p-5 shadow-sm">
-            <h2 className="font-bold text-base text-slc-ink">🏆 Top Circular Heroes</h2>
-            <p className="text-xs text-slc-steel font-medium mb-4">Global leaderboard</p>
-            
-            <div className="space-y-1">
-              {leaderboard.map((user, idx) => {
-                const isMe = user.user_id === userId;
-                return (
-                  <div key={idx} className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors ${
-                    isMe ? "bg-slc-leaf-light border border-slc-leaf/20" : "hover:bg-slc-cloud"
-                  }`}>
-                    <div className="w-6 text-center font-bold text-sm">
-                      {user.rank === 1 ? "🥇" : user.rank === 2 ? "🥈" : user.rank === 3 ? "🥉" : `#${user.rank}`}
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-slc-smoke flex items-center justify-center text-slc-ink font-bold text-xs border border-slc-divider shrink-0">
-                      {user.name.charAt(0)}
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold text-slc-ink leading-tight">{user.name}{isMe && " (You)"}</span>
-                      <span className="text-[10px] font-bold text-slc-steel">{user.total_credits} pts</span>
-                    </div>
-                    <div className="ml-auto">
-                      <span className="text-[10px] font-bold text-slc-leaf bg-white px-2 py-0.5 rounded-full border border-slc-leaf/10 whitespace-nowrap">
-                        🌿 {user.co2_saved_kg}kg
+                      <span className="w-6 text-center font-bold text-sm">
+                        {idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}`}
                       </span>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                        isMe ? "bg-slc-leaf text-white" : "bg-slc-smoke text-slc-ink border border-slc-divider"
+                      }`}>
+                        {user.name.charAt(0)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-slc-ink truncate">
+                          {user.name}{isMe && " (You)"}
+                        </p>
+                        <p className="text-[10px] text-slc-steel font-bold">{user.credits_balance} pts · {user.co2_saved_kg}kg</p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-            
-            <p className="text-[11px] text-slc-steel text-center mt-5 font-medium bg-slc-cloud py-2 rounded-lg">
-              You&apos;re ranked #{currentUser.rank} out of 1,247 SecondLife users
-            </p>
-          </div>
 
-          <div className="bg-slc-leaf-light border border-slc-leaf/30 rounded-xl p-6 text-center shadow-sm relative overflow-hidden">
-            <div className="text-6xl mb-3 relative z-10">{emoji}</div>
-            <h3 className="font-bold text-slc-leaf text-xl relative z-10">{levelName}</h3>
-            <p className="text-xs text-slc-leaf-dark font-medium mt-1 relative z-10">
-              Keep returning items to grow your forest
-            </p>
-            
-            <div className="absolute -right-4 -bottom-4 text-8xl opacity-10 blur-[2px] pointer-events-none z-0">
-              {emoji}
+            {/* Quick Actions */}
+            <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
+              <button onClick={() => router.push("/sell")} className="w-full flex items-center gap-3 px-5 py-4 border-b border-slc-divider/50 hover:bg-slc-cloud/50 transition-colors text-left">
+                <span className="w-9 h-9 bg-slc-leaf/10 rounded-xl flex items-center justify-center">📸</span>
+                <span className="text-sm font-bold text-slc-ink">Sell an Item</span>
+                <span className="ml-auto text-slc-steel text-xs">→</span>
+              </button>
+              <button onClick={() => router.push("/marketplace")} className="w-full flex items-center gap-3 px-5 py-4 border-b border-slc-divider/50 hover:bg-slc-cloud/50 transition-colors text-left">
+                <span className="w-9 h-9 bg-amber-500/10 rounded-xl flex items-center justify-center">🛍️</span>
+                <span className="text-sm font-bold text-slc-ink">Browse Marketplace</span>
+                <span className="ml-auto text-slc-steel text-xs">→</span>
+              </button>
+              <button onClick={() => router.push(`/return/49a5bb33-491a-40fd-8bf8-3c7ae1742ba8`)} className="w-full flex items-center gap-3 px-5 py-4 hover:bg-slc-cloud/50 transition-colors text-left">
+                <span className="w-9 h-9 bg-sky-500/10 rounded-xl flex items-center justify-center">↩️</span>
+                <span className="text-sm font-bold text-slc-ink">Return a Purchase</span>
+                <span className="ml-auto text-slc-steel text-xs">→</span>
+              </button>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

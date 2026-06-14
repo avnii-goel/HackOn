@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SecondLife Dashboard - Your Green Impact</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#dce2f7",
+                    "inverse-primary": "#4edea3",
+                    "tertiary-container": "#fc7c78",
+                    "on-secondary-fixed-variant": "#00513b",
+                    "on-tertiary-container": "#711419",
+                    "surface": "#f9f9ff",
+                    "secondary": "#1b6b51",
+                    "surface-variant": "#dce2f7",
+                    "surface-tint": "#006c49",
+                    "secondary-container": "#a6f2d1",
+                    "primary": "#006c49",
+                    "surface-container": "#e9edff",
+                    "tertiary-fixed": "#ffdad7",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#3c4a42",
+                    "primary-fixed-dim": "#4edea3",
+                    "surface-dim": "#d3daef",
+                    "on-secondary-container": "#237157",
+                    "primary-container": "#10b981",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#410005",
+                    "surface-container-low": "#f1f3ff",
+                    "on-primary-fixed-variant": "#005236",
+                    "surface-bright": "#f9f9ff",
+                    "inverse-surface": "#293040",
+                    "on-tertiary-fixed-variant": "#842225",
+                    "tertiary-fixed-dim": "#ffb3af",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#a43a3a",
+                    "primary-fixed": "#6ffbbe",
+                    "on-primary-fixed": "#002113",
+                    "secondary-fixed": "#a6f2d1",
+                    "on-primary-container": "#00422b",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#edf0ff",
+                    "background": "#f9f9ff",
+                    "surface-container-high": "#e1e8fd",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed-dim": "#8bd6b6",
+                    "on-background": "#141b2b",
+                    "outline-variant": "#bbcabf",
+                    "on-secondary-fixed": "#002116",
+                    "on-surface": "#141b2b",
+                    "outline": "#6c7a71"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "lg": "40px",
+                    "xl": "64px",
+                    "sm": "12px",
+                    "container-margin": "24px",
+                    "md": "24px",
+                    "xs": "4px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #f9f9ff; color: #141b2b; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .impact-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-container-margin h-16 max-w-7xl mx-auto left-0 right-0 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-outline-variant/10 shadow-sm">
+<div class="flex items-center gap-2 font-headline-md text-headline-md font-bold text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span>SecondLife</span>
+</div>
+<div class="hidden md:flex items-center gap-lg">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Home</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Marketplace</a>
+<a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-1" href="#">Dashboard</a>
+</div>
+<div class="flex items-center gap-md">
+<span class="px-3 py-1 bg-primary-container text-on-primary-container rounded-full font-label-md text-label-md transition-transform hover:scale-105">💚 450 pts</span>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="User profile avatar" data-alt="A close-up professional portrait of a smiling young adult with clear skin and friendly eyes, set against a soft-focus minimalist office background. The lighting is natural and bright, conveying a sense of reliability and professional warmth in a modern corporate setting. The overall aesthetic is clean and high-end." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtFwZDdtRWl3ECKMqaxgbgW9tmXCdS9zd_F1QMpj22RbyUVt6BR6F0sSYzku2OaQOfFJa5ncVaVzdRFs47MNqJqDPJrkPa4U4MYKjg5JmBe7t3b8A0-Zie0OW2RCFDtFVb2QslQRvLZeYgotN4oIMjRjVSjeYWlZ9IlSOfELD6J590nxiI_2JshpsuwAEZGZVjQWB0TcvdR1HHD-PaGOfX2B1c5ADyybOBWn-GPIdl-S-cI0xlKhEAKbY3mQkt3XbbE6BhCuFZeD4"/>
+</div>
+</div>
+</nav>
+<main class="pt-24 pb-xl px-container-margin max-w-7xl mx-auto">
+<!-- Dashboard Header -->
+<header class="mb-lg">
+<h1 class="font-headline-lg text-headline-lg text-on-background mb-xs">Your Green Impact</h1>
+<p class="text-on-surface-variant font-body-md">Real-time statistics of your contribution to a circular economy.</p>
+</header>
+<!-- Top Stats Bento -->
+<section class="stats-grid mb-lg">
+<div class="glass-card p-md rounded-xl flex flex-col justify-between">
+<div class="flex items-center justify-between mb-sm">
+<span class="text-on-surface-variant font-label-md">Credits Balance</span>
+<span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+</div>
+<div>
+<div class="text-headline-md font-bold text-primary">450 pts</div>
+<div class="text-label-sm text-secondary">+120 this month</div>
+</div>
+</div>
+<div class="glass-card p-md rounded-xl flex flex-col justify-between">
+<div class="flex items-center justify-between mb-sm">
+<span class="text-on-surface-variant font-label-md">CO₂ Saved</span>
+<span class="material-symbols-outlined text-primary">cloud_done</span>
+</div>
+<div>
+<div class="text-headline-md font-bold text-primary">8.5kg</div>
+<div class="text-label-sm text-secondary">Equivalent to 12 trees</div>
+</div>
+</div>
+<div class="glass-card p-md rounded-xl flex flex-col justify-between">
+<div class="flex items-center justify-between mb-sm">
+<span class="text-on-surface-variant font-label-md">Items Recycled</span>
+<span class="material-symbols-outlined text-primary">recycling</span>
+</div>
+<div>
+<div class="text-headline-md font-bold text-primary">14 items</div>
+<div class="text-label-sm text-secondary">4 pending verification</div>
+</div>
+</div>
+<div class="impact-gradient p-md rounded-xl flex flex-col justify-between text-white">
+<div class="flex items-center justify-between mb-sm">
+<span class="font-label-md opacity-90">Leaderboard Rank</span>
+<span class="material-symbols-outlined">workspace_premium</span>
+</div>
+<div>
+<div class="text-headline-md font-bold">#3 Global</div>
+<div class="text-label-sm opacity-90">Top 1% of contributors</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-md">
+<!-- Left: Credits Wallet -->
+<div class="lg:col-span-7 flex flex-col gap-md">
+<section class="glass-card p-md rounded-xl">
+<h3 class="font-headline-md text-headline-md mb-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined">payments</span> Credits Wallet
+                    </h3>
+<!-- Progress Bar to next tier -->
+<div class="mb-lg">
+<div class="flex justify-between font-label-md mb-xs">
+<span class="text-on-surface-variant">Silver Tier</span>
+<span class="text-primary font-bold">50 pts to Gold</span>
+</div>
+<div class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[90%] rounded-full shadow-sm"></div>
+</div>
+</div>
+<!-- Transaction History -->
+<h4 class="font-label-md text-label-md mb-sm text-on-surface-variant uppercase tracking-wider">Recent Transactions</h4>
+<div class="space-y-sm">
+<div class="flex items-center justify-between p-sm hover:bg-surface-container-low transition-colors rounded-lg border border-transparent hover:border-outline-variant/20">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">headphones</span>
+</div>
+<div>
+<div class="font-body-md font-bold text-on-surface">Sony Headphones</div>
+<div class="text-label-sm text-on-surface-variant">Redeemed 2 days ago</div>
+</div>
+</div>
+<div class="text-error font-bold">- 200 pts</div>
+</div>
+<div class="flex items-center justify-between p-sm hover:bg-surface-container-low transition-colors rounded-lg border border-transparent hover:border-outline-variant/20">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">tablet_mac</span>
+</div>
+<div>
+<div class="font-body-md font-bold text-on-surface">iPad (Gen 9)</div>
+<div class="text-label-sm text-on-surface-variant">Item Sold (Recycled)</div>
+</div>
+</div>
+<div class="text-secondary font-bold">+ 350 pts</div>
+</div>
+<div class="flex items-center justify-between p-sm hover:bg-surface-container-low transition-colors rounded-lg border border-transparent hover:border-outline-variant/20">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">eco</span>
+</div>
+<div>
+<div class="font-body-md font-bold text-on-surface">Weekly Bonus</div>
+<div class="text-label-sm text-on-surface-variant">Consistency reward</div>
+</div>
+</div>
+<div class="text-secondary font-bold">+ 25 pts</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right: CO2 Impact -->
+<div class="lg:col-span-5">
+<section class="glass-card p-md rounded-xl h-full flex flex-col">
+<h3 class="font-headline-md text-headline-md mb-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined">analytics</span> CO₂ Impact
+                    </h3>
+<div class="flex-1 flex flex-col justify-center items-center py-lg">
+<div class="w-full max-w-[200px] aspect-square relative mb-md">
+<!-- SVG Gauge -->
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="45" stroke="#E5E7EB" stroke-width="8"></circle>
+<circle class="transition-all duration-1000" cx="50" cy="50" fill="none" r="45" stroke="url(#impact-grad)" stroke-dasharray="282.7" stroke-dashoffset="70" stroke-linecap="round" stroke-width="10"></circle>
+<defs>
+<lineargradient id="impact-grad" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" style="stop-color:#fbbf24"></stop>
+<stop offset="100%" style="stop-color:#10b981"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="text-display-lg font-bold text-primary leading-none">85</span>
+<span class="text-label-md text-on-surface-variant">Quality Score</span>
+</div>
+</div>
+<div class="w-full space-y-md">
+<div>
+<div class="flex justify-between font-label-md mb-xs">
+<span class="text-on-surface-variant">You</span>
+<span class="text-primary font-bold">8.5kg saved</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[75%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md mb-xs">
+<span class="text-on-surface-variant">Avg. User</span>
+<span class="text-on-surface-variant font-bold">3.2kg saved</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-outline-variant w-[30%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-md p-sm bg-primary-container/10 rounded-lg border border-primary/20">
+<p class="text-label-md text-on-primary-container leading-relaxed">
+<span class="font-bold">Summary:</span> You are currently offsetting CO₂ emissions at a rate <span class="font-bold">2.6x higher</span> than the average platform user. Keep listing items to reach the 10kg milestone!
+                        </p>
+</div>
+</section>
+</div>
+</div>
+<!-- Bottom: Leaderboard -->
+<section class="mt-lg">
+<div class="glass-card rounded-xl overflow-hidden shadow-lg">
+<div class="p-md border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-low">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+                        Green Champions 🏆
+                    </h3>
+<button class="font-label-md text-primary hover:underline transition-all">View All Rankings</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container font-label-md text-on-surface-variant">
+<th class="px-md py-sm">Rank</th>
+<th class="px-md py-sm">User</th>
+<th class="px-md py-sm">Total Impacts</th>
+<th class="px-md py-sm">CO₂ Offset</th>
+<th class="px-md py-sm">Level</th>
+</tr>
+</thead>
+<tbody class="font-body-md divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-md font-bold">#1</td>
+<td class="px-md py-md flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold">JD</div>
+<span>Jane Doe</span>
+</td>
+<td class="px-md py-md">1,240 pts</td>
+<td class="px-md py-md">22.4kg</td>
+<td class="px-md py-md"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-xs font-bold uppercase">Legend</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-md font-bold">#2</td>
+<td class="px-md py-md flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold">MS</div>
+<span>Marcus Smith</span>
+</td>
+<td class="px-md py-md">980 pts</td>
+<td class="px-md py-md">15.8kg</td>
+<td class="px-md py-md"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-full text-xs font-bold uppercase">Elite</span></td>
+</tr>
+<!-- Highlighted User -->
+<tr class="bg-primary-container/10 border-l-4 border-primary">
+<td class="px-md py-md font-bold text-primary">#3</td>
+<td class="px-md py-md flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold">YOU</div>
+<span class="font-bold">Alex (You)</span>
+</td>
+<td class="px-md py-md font-bold">450 pts</td>
+<td class="px-md py-md font-bold">8.5kg</td>
+<td class="px-md py-md"><span class="px-2 py-0.5 bg-primary-container text-on-primary-container rounded-full text-xs font-bold uppercase">Silver</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-md font-bold">#4</td>
+<td class="px-md py-md flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-bold">KL</div>
+<span>Kevin Lee</span>
+</td>
+<td class="px-md py-md">410 pts</td>
+<td class="px-md py-md">7.2kg</td>
+<td class="px-md py-md"><span class="px-2 py-0.5 bg-surface-container-highest text-on-surface-variant rounded-full text-xs font-bold uppercase">Silver</span></td>
+</tr>
+<!-- Skeleton/More placeholders -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-md font-bold text-on-surface-variant opacity-50">#5</td>
+<td class="px-md py-md flex items-center gap-sm opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest"></div>
+<span>Sarah Chen</span>
+</td>
+<td class="px-md py-md opacity-50">390 pts</td>
+<td class="px-md py-md opacity-50">6.9kg</td>
+<td class="px-md py-md opacity-50"><span class="px-2 py-0.5 bg-surface-container-highest rounded-full text-xs font-bold uppercase">Pro</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-lg px-container-margin flex flex-col md:flex-row justify-between items-center gap-md bg-surface-container-low dark:bg-inverse-surface border-t border-outline-variant/20">
+<div class="flex flex-col gap-sm">
+<div class="font-headline-sm text-headline-sm font-bold text-primary">SecondLife</div>
+<p class="font-label-md text-label-md text-on-surface-variant max-w-sm">© 2024 SecondLife by Amazon. Circular economy for a greener planet.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-md">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">Sustainability Report</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">How it Works</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary hover:underline transition-all" href="#">Help Center</a>
+</div>
+</footer>
+<script>
+        // Simple micro-interactions for the cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

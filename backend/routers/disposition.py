@@ -15,6 +15,7 @@ async def analyze_disposition(
     product_name: str = Form(...),
     original_price: float = Form(...),
     user_id: str = Form(...),
+    auto_list: bool = Form(default=False),
 ):
     try:
         # 1. Upload each image to Cloudinary
@@ -43,9 +44,9 @@ async def analyze_disposition(
             analysis["verdict"],
         )
 
-        # 5. Create listing if verdict is Resell or Refurbish
+        # 5. Create listing if auto_list is True and verdict is Resell or Refurbish
         listing_id = None
-        if analysis["verdict"] in ("Resell", "Refurbish"):
+        if auto_list and analysis["verdict"] in ("Resell", "Refurbish"):
             listing_data = {
                 "seller_id": user_id,
                 "product_name": product_name,
@@ -56,11 +57,11 @@ async def analyze_disposition(
                 "suggested_price": analysis["estimated_resale_value"],
                 "original_price": original_price,
                 "co2_saved": analysis["co2_saved"],
-                "image_url": image_urls[0],
+                "image_url": image_urls[0] if image_urls else None,
                 "status": "available",
             }
             listing = supabase_service.create_listing(listing_data)
-            listing_id = listing["id"]
+            listing_id = listing["id"] if listing else None
 
         # 6. Update user credits
         supabase_service.update_user_credits(

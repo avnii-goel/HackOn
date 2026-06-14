@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SecondLife | Circular Economy Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#dce2f7",
+                    "inverse-primary": "#4edea3",
+                    "tertiary-container": "#fc7c78",
+                    "on-secondary-fixed-variant": "#00513b",
+                    "on-tertiary-container": "#711419",
+                    "surface": "#f9f9ff",
+                    "secondary": "#1b6b51",
+                    "surface-variant": "#dce2f7",
+                    "surface-tint": "#006c49",
+                    "secondary-container": "#a6f2d1",
+                    "primary": "#006c49",
+                    "surface-container": "#e9edff",
+                    "tertiary-fixed": "#ffdad7",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#3c4a42",
+                    "primary-fixed-dim": "#4edea3",
+                    "surface-dim": "#d3daef",
+                    "on-secondary-container": "#237157",
+                    "primary-container": "#10b981",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#410005",
+                    "surface-container-low": "#f1f3ff",
+                    "on-primary-fixed-variant": "#005236",
+                    "surface-bright": "#f9f9ff",
+                    "inverse-surface": "#293040",
+                    "on-tertiary-fixed-variant": "#842225",
+                    "tertiary-fixed-dim": "#ffb3af",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#a43a3a",
+                    "primary-fixed": "#6ffbbe",
+                    "on-primary-fixed": "#002113",
+                    "secondary-fixed": "#a6f2d1",
+                    "on-primary-container": "#00422b",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#edf0ff",
+                    "background": "#f9f9ff",
+                    "surface-container-high": "#e1e8fd",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed-dim": "#8bd6b6",
+                    "on-background": "#141b2b",
+                    "outline-variant": "#bbcabf",
+                    "on-secondary-fixed": "#002116",
+                    "on-surface": "#141b2b",
+                    "outline": "#6c7a71"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "lg": "40px",
+                    "xl": "64px",
+                    "sm": "12px",
+                    "container-margin": "24px",
+                    "md": "24px",
+                    "xs": "4px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #00422b 0%, #006c49 100%);
+        }
+        .progress-gauge {
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-outline-variant/10 shadow-sm h-16">
+<div class="max-w-7xl mx-auto px-container-margin h-full flex justify-between items-center">
+<!-- Brand Logo -->
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
+                SecondLife
+            </div>
+<!-- Nav Links -->
+<div class="hidden md:flex items-center gap-md font-body-md text-body-md">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-primary dark:text-inverse-primary font-bold border-b-2 border-primary pb-1" href="#">Marketplace</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors" href="#">Dashboard</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-sm">
+<div class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded-full font-label-md flex items-center gap-1 hover:scale-105 transition-transform duration-200 cursor-pointer">
+                    💚 450 pts
+                </div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/20">
+<img alt="User profile avatar" data-alt="A professional studio portrait of a friendly-looking user for a profile avatar. The lighting is soft and warm, highlighting clear facial features. The background is a minimalist, light gray textured wall, maintaining a premium and corporate modern aesthetic consistent with a high-end digital marketplace app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEPEOl_Ah6HUkOF6VnE61KhyfxeeddhWY8mBPbw1ce3T-qLJwce4ghuUfsNPxneMedcWixPrGSA9JWuEJjsVI8CJLaN3QWjb0Q4iEFGXoFXFcESGz4EpgHwX0xTpOvL5SVRMesplkSe_uYXQi-FbdG-EKJu_4bDNBzaWHcO9mx4dsSjy2128rjy6j2bNxDhPQSpHXm5Cw5O-6t93yY7zpUvnkKqcaZugLEhrna5t2PtBO3LoaRQDqzX_Wnimzn5m1NpzvGM8VLVpI"/>
+</div>
+</div>
+</div>
+</nav>
+<main class="pt-16">
+<!-- Hero Section -->
+<section class="hero-gradient relative min-h-[500px] flex items-center overflow-hidden">
+
+<div class="relative z-10 max-w-7xl mx-auto px-container-margin grid md:grid-cols-2 gap-lg items-center py-xl">
+<div>
+<h1 class="font-display-lg text-display-lg text-white mb-md leading-tight">
+                        Every Return Gets a <br/><span class="text-primary-fixed">Second Life</span>
+</h1>
+<p class="text-white/80 font-body-lg text-body-lg mb-lg max-w-lg">
+                        Join Amazon's premium circular economy. Shop certified pre-owned treasures or turn your returns into rewards that protect the planet.
+                    </p>
+<div class="flex flex-wrap gap-md">
+<button class="bg-primary-container text-on-primary-container px-lg py-md rounded-xl font-headline-md hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg flex items-center gap-2">
+                            Start a Return
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="border-2 border-white/30 text-white hover:bg-white/10 px-lg py-md rounded-xl font-headline-md transition-all backdrop-blur-md">
+                            Browse Marketplace
+                        </button>
+</div>
+</div>
+<!-- Floating Stats -->
+<div class="relative grid grid-cols-1 gap-md">
+<div class="glass-card p-md rounded-2xl flex items-center gap-md transform hover:translate-x-4 transition-transform duration-500">
+<div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">inventory_2</span>
+</div>
+<div>
+<p class="text-white/60 font-label-sm uppercase tracking-wider">Circular Impact</p>
+<h3 class="text-white font-headline-lg text-headline-lg">1.2M Products Saved</h3>
+</div>
+</div>
+<div class="glass-card p-md rounded-2xl flex items-center gap-md transform translate-x-8 hover:translate-x-12 transition-transform duration-500">
+<div class="w-12 h-12 bg-secondary-container/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-container">cloud_done</span>
+</div>
+<div>
+<p class="text-white/60 font-label-sm uppercase tracking-wider">Carbon Savings</p>
+<h3 class="text-white font-headline-lg text-headline-lg">840K kg CO₂ Prevented</h3>
+</div>
+</div>
+<div class="glass-card p-md rounded-2xl flex items-center gap-md transform translate-x-4 hover:translate-x-8 transition-transform duration-500">
+<div class="w-12 h-12 bg-tertiary-container/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary-container">payments</span>
+</div>
+<div>
+<p class="text-white/60 font-label-sm uppercase tracking-wider">Community Economy</p>
+<h3 class="text-white font-headline-lg text-headline-lg">₹24Cr Saved Value</h3>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Catalog Filters & Search -->
+<section class="max-w-7xl mx-auto px-container-margin py-lg">
+<div class="flex flex-col md:flex-row justify-between items-end gap-md mb-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg mb-xs">Explore Circular Marketplace</h2>
+<p class="text-on-surface-variant font-body-md">Verified quality from people like you.</p>
+</div>
+<div class="flex flex-wrap gap-sm">
+<button class="bg-primary text-on-primary px-md py-xs rounded-full font-label-md">All</button>
+<button class="bg-surface-container-highest text-on-surface-variant px-md py-xs rounded-full font-label-md hover:bg-outline-variant/30 transition-colors">Electronics</button>
+<button class="bg-surface-container-highest text-on-surface-variant px-md py-xs rounded-full font-label-md hover:bg-outline-variant/30 transition-colors">Clothing</button>
+<button class="bg-surface-container-highest text-on-surface-variant px-md py-xs rounded-full font-label-md hover:bg-outline-variant/30 transition-colors">Home &amp; Kitchen</button>
+<button class="bg-surface-container-highest text-on-surface-variant px-md py-xs rounded-full font-label-md hover:bg-outline-variant/30 transition-colors">Books</button>
+</div>
+</div>
+<!-- Product Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Product 1 -->
+<div class="group relative bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 hover:shadow-xl transition-all duration-300">
+<div class="aspect-square bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="High-end studio photography of professional over-ear headphones in a sleek matte black finish. The product is placed on a minimalist reflective surface with soft side lighting and a neutral gray backdrop. The overall aesthetic is premium, crisp, and high-quality, typical of a luxury consumer electronics marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC34FOe4xdrQK5JGHulm7H-wHX-2aT2sKArwPj8OYiuuMYN3lC5soBBiiCj4sHtiMx3LVs1_GrAa9Mjn6cZQaTYlN6jzVwpzEUZmzdFqWDJI-lGg7xsgVnW6x75CGbKt2ejinL5TDSiuPuZZryp1jxXitfkAr8tLap7wIwtmbkUjdYmjg7ZBKZh6Dmob7_oAcbehYa1Sgb9HAutYRqg6SALKYtlh7ALe8aHslu2AHhqpRtbYxw6SIPbvte4R7lJaJc__YfX-0A2YW4"/>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h4 class="font-headline-md text-headline-md mb-xs">Bose QuietComfort 45</h4>
+<p class="text-on-surface-variant font-label-md">Electronics • Open Box</p>
+</div>
+<div class="text-right">
+<span class="block font-headline-md text-primary">₹18,499</span>
+<span class="text-on-surface-variant line-through font-label-sm">₹29,900</span>
+</div>
+</div>
+<div class="flex items-center gap-md pt-sm border-t border-outline-variant/20">
+<div class="flex items-center gap-1">
+<div class="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+<span class="font-label-sm text-on-surface">Risk: Low</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary">verified</span>
+<span class="font-label-sm text-on-surface">Amazon Verified</span>
+</div>
+</div>
+</div>
+<div class="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+<button class="bg-white text-primary px-lg py-sm rounded-xl font-headline-md transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                            View Details
+                        </button>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="group relative bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 hover:shadow-xl transition-all duration-300">
+<div class="aspect-square bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A pair of vibrant red athletic sneakers captured in a dynamic, high-speed photography style. The shoes are set against a dark, dramatic background with focused lighting that emphasizes the texture and quality of the materials. The scene communicates energy, performance, and a premium editorial feel suitable for a high-end fashion or gear catalog." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYDJ2dPA8gMEnb1BivnCgT1K0dhpNBPckP7Kg96-f9dNTvinCgIrgTx5pdFyGAg_FuNx2TaB-6FbpFZTpSOChyv4O6-QaB4xHlgYvzWFKMi7reJPHq6p-shIq8qAAHsQ59uokZJqogwByIcNpbnHnwyeX2Gz2GJOGla_8se8nl2cRFl4bdMYIuqm1NrMZV46_kteLv5BgEQIncj_PwLGFNH_I6YOWGxgdCJoRp-gtnZEB4zK9XOPafzkJvFywrnZIcDHvh5QIxJnI"/>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h4 class="font-headline-md text-headline-md mb-xs">Nike Air Zoom Pegasus</h4>
+<p class="text-on-surface-variant font-label-md">Clothing • Gently Used</p>
+</div>
+<div class="text-right">
+<span class="block font-headline-md text-primary">₹4,200</span>
+<span class="text-on-surface-variant line-through font-label-sm">₹11,500</span>
+</div>
+</div>
+<div class="flex items-center gap-md pt-sm border-t border-outline-variant/20">
+<div class="flex items-center gap-1">
+<div class="w-3 h-3 rounded-full bg-tertiary animate-pulse"></div>
+<span class="font-label-sm text-on-surface">Risk: Medium</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary">verified</span>
+<span class="font-label-sm text-on-surface">Cleaning Cert.</span>
+</div>
+</div>
+</div>
+<div class="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+<button class="bg-white text-primary px-lg py-sm rounded-xl font-headline-md transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                            View Details
+                        </button>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="group relative bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 hover:shadow-xl transition-all duration-300">
+<div class="aspect-square bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A minimalist designer wristwatch with a white dial and tan leather strap, photographed on a clean, off-white architectural background. The lighting is bright and airy, casting soft shadows that give the object a tangible, high-value presence. This image follows a corporate modern aesthetic with a focus on simple elegance and high-end retail quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYZNsTCy-35nB1bnsSfppFSYebNe7T3mdl29LPud2qAkmka_L5nGgGRd58xLenHVcGqQv4IxPlgopxkCDJBWueMFH2pz_rClmJNIDemKV8iQB9Ny75rNXXIsCPBhP_R6GeqHv_4k5NWJthGXQL_TWmicW5i0zLpNudLUWWIcCNPYN8am3XJs6YiX9XeSIESLnqtIyqTX8oVTwCPWXpXeRqf7IXFGi8fEX_QO_l7pGv5eEaq7wDE4YthuvYcTezahdT2Jb0UcGj1Y8"/>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h4 class="font-headline-md text-headline-md mb-xs">Fossil Minimalist Watch</h4>
+<p class="text-on-surface-variant font-label-md">Accessories • New Condition</p>
+</div>
+<div class="text-right">
+<span class="block font-headline-md text-primary">₹6,800</span>
+<span class="text-on-surface-variant line-through font-label-sm">₹12,495</span>
+</div>
+</div>
+<div class="flex items-center gap-md pt-sm border-t border-outline-variant/20">
+<div class="flex items-center gap-1">
+<div class="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+<span class="font-label-sm text-on-surface">Risk: Low</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary">verified</span>
+<span class="font-label-sm text-on-surface">Box Included</span>
+</div>
+</div>
+</div>
+<div class="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+<button class="bg-white text-primary px-lg py-sm rounded-xl font-headline-md transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                            View Details
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Condition Explanation Section -->
+<section class="bg-surface-container-low py-xl overflow-hidden">
+<div class="max-w-7xl mx-auto px-container-margin">
+<div class="grid md:grid-cols-2 gap-xl items-center">
+<div class="relative h-[400px] rounded-3xl overflow-hidden shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="A clean, organized quality assurance lab setting where technicians are inspecting products. The lighting is bright, clinical, and high-key. The focus is on a high-tech inspection station with digital screens showing condition scores. The environment feels professional, reliable, and technologically advanced, reinforcing Amazon's circular economy trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbzlqE3m2CfDq1KXzJmyHUAUBFk_Qm3BJBYUZ89LXQqH68wYeLa89YE13cTHRmxBFM0zNTgpU_yO5UAmz1qE0PKbQId_33QAIBJGut0G56mJbU1QbKnwihgUXkQvDXWeL-7P-D4oDWmd7lnK2vhdO2zqQsebCj7NZlIhVNOwja56R1xsACX1TlNEGdwelq0uVE2mIdrLw94M6fD98Elahy3NMJ52LmQB5jfjfK8RN0EvmXVAK7KvdreHoALpwqK6H2Z-by5KfmKVs"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-md">
+<p class="text-white font-headline-md">Certified Quality Control</p>
+<p class="text-white/80 font-body-md">Every item undergoes a rigorous 20-point inspection before listing.</p>
+</div>
+</div>
+<div>
+<h2 class="font-headline-lg text-headline-lg mb-md">How We Grade Items</h2>
+<div class="space-y-md">
+<div class="flex items-start gap-md">
+<div class="w-10 h-10 shrink-0 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md">Pristine</h4>
+<p class="text-on-surface-variant font-body-md">Indistinguishable from new. Often original factory seal or zero sign of wear.</p>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<div class="w-10 h-10 shrink-0 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md">Refurbished</h4>
+<p class="text-on-surface-variant font-body-md">Professionally restored to full functionality by certified technicians.</p>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<div class="w-10 h-10 shrink-0 bg-tertiary/10 rounded-lg flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md">Pre-Loved</h4>
+<p class="text-on-surface-variant font-body-md">Minor cosmetic wear but fully functional. The most sustainable choice for your wallet.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-lg px-container-margin bg-surface-container-low dark:bg-inverse-surface border-t border-outline-variant/20">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-lg">
+<div class="max-w-xs">
+<div class="font-headline-sm text-headline-sm font-bold text-primary mb-sm">SecondLife</div>
+<p class="text-on-surface-variant font-label-md">© 2024 SecondLife by Amazon. Circular economy for a greener planet.</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-xl">
+<div class="flex flex-col gap-xs">
+<span class="font-label-md text-on-background uppercase mb-xs">About</span>
+<a class="text-on-surface-variant font-label-md hover:underline transition-all" href="#">Sustainability Report</a>
+<a class="text-on-surface-variant font-label-md hover:underline transition-all" href="#">How it Works</a>
+</div>
+<div class="flex flex-col gap-xs">
+<span class="font-label-md text-on-background uppercase mb-xs">Support</span>
+<a class="text-on-surface-variant font-label-md hover:underline transition-all" href="#">Terms of Service</a>
+<a class="text-on-surface-variant font-label-md hover:underline transition-all" href="#">Help Center</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions and subtle scroll effects
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.group');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.classList.add('shadow-2xl');
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.classList.remove('shadow-2xl');
+                });
+            });
+
+            // Smooth parallax for hero elements
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const heroText = document.querySelector('h1');
+                if(heroText) {
+                    heroText.style.transform = `translateY(${scrolled * 0.15}px)`;
+                }
+            });
+        });
+    </script>
+</body></html>

@@ -16,25 +16,31 @@ client = Groq(api_key=GROQ_API_KEY)
 def analyze_product_image(image_base64: str, return_reason: str, product_name: str) -> dict:
     try:
         system_prompt = (
-            "You are an AI product condition analyzer for Amazon's Second Life Commerce platform. "
-            "Analyze the product image and return a JSON response only, no other text."
+            "You are a strict AI product condition analyzer. "
+            "You MUST analyze what you actually SEE in the image. "
+            "If the image shows a different product than what is named, analyze what you actually see. "
+            "Return only valid JSON, no other text."
         )
 
         user_prompt = (
-            f"Analyze this product image. Return reason: {return_reason}. Product: {product_name}.\n\n"
+            f"Analyze this product image carefully.\n"
+            f"User says this is: {product_name}\n"
+            f"Additional context: {return_reason}\n\n"
+            "First identify what product you actually see in the image.\n"
+            "Then analyze its condition based purely on visual inspection.\n\n"
             "Return ONLY this JSON:\n"
             "{\n"
-            "  \"condition_score\": <integer 0-100>,\n"
-            "  \"defects\": <list of strings describing visible issues, max 4>,\n"
-            "  \"verdict\": <exactly one of: Resell, Refurbish, Donate, Recycle>,\n"
-            "  \"reasoning\": <2 sentence explanation>,\n"
-            "  \"estimated_resale_value\": <float in INR>,\n"
-            "  \"co2_saved\": <float kg>,\n"
-            "  \"green_credits\": <integer>\n"
+            "  \"detected_product\": <what you actually see in the image>,\n"
+            "  \"condition_score\": <integer 0-100 based on visual condition>,\n"
+            "  \"defects\": <list of visually detected issues, max 4, empty list if none>,\n"
+            "  \"verdict\": <Resell if score>=80, Refurbish if 50-79, Donate if 20-49, Recycle if below 20>,\n"
+            "  \"reasoning\": <2 sentences about what you visually see and why this verdict>,\n"
+            "  \"estimated_resale_value\": <realistic INR resale value for detected product in this condition. Base on actual Indian market prices. High value items like laptops/phones get higher values, low value items like books/bottles get lower values>,\n"
+            "  \"co2_saved\": <CO2 in kg based on item weight and category. Electronics 2-5kg, clothing 1-3kg, books 0.3-0.8kg, small items 0.2-0.5kg>,\n"
+            "  \"green_credits\": <credits proportional to item value. Formula: min(500, max(50, estimated_resale_value / 100)). Round to nearest 50>\n"
             "}\n\n"
-            "Verdict rules: 80-100=Resell, 50-79=Refurbish, 20-49=Donate, 0-19=Recycle\n"
-            "Green credits: Resell=200, Refurbish=150, Donate=100, Recycle=50\n"
-            "CO2 saved: Resell=2.5, Refurbish=1.8, Donate=1.2, Recycle=0.8"
+            "IMPORTANT: Be realistic. A bottle is worth ₹50-200. A phone is worth ₹5000-30000. "
+            "Credits must reflect actual item value, not always 200."
         )
 
         response = client.chat.completions.create(
@@ -57,30 +63,37 @@ def analyze_product_image(image_base64: str, return_reason: str, product_name: s
                     ],
                 },
             ],
-            temperature=0.3,
-            max_tokens=512,
+            temperature=0.2,
+            max_tokens=600,
         )
 
         content = response.choices[0].message.content.strip()
 
-        # Try to extract JSON from the response
         if "```json" in content:
             content = content.split("```json")[1].split("```")[0].strip()
         elif "```" in content:
             content = content.split("```")[1].split("```")[0].strip()
 
         result = json.loads(content)
+
+        # Validate and fix credits formula if AI ignored it
+        if result.get("estimated_resale_value", 0) > 0:
+            calculated_credits = min(500, max(50, int(result["estimated_resale_value"] / 100)))
+            # Round to nearest 50
+            result["green_credits"] = round(calculated_credits / 50) * 50
+
         return result
 
     except (json.JSONDecodeError, IndexError, KeyError):
         return {
-            "condition_score": 75,
-            "defects": ["Unable to fully analyze image"],
-            "verdict": "Resell",
-            "reasoning": "AI analysis could not parse the response. Defaulting to Resell based on general condition.",
-            "estimated_resale_value": 0.0,
-            "co2_saved": 2.5,
-            "green_credits": 200,
+            "detected_product": product_name,
+            "condition_score": 70,
+            "defects": ["Could not fully analyze image"],
+            "verdict": "Refurbish",
+            "reasoning": "AI could not parse the image clearly. Manual inspection recommended.",
+            "estimated_resale_value": 500.0,
+            "co2_saved": 1.0,
+            "green_credits": 50,
         }
     except Exception as e:
         raise Exception(f"Failed to analyze product image: {str(e)}")
