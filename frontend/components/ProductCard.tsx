@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Package, Bot, CheckCircle, Heart, Sparkles, Activity, ClipboardList } from 'lucide-react';
 
 interface Product {
   id?: string;
@@ -53,28 +55,14 @@ export default function ProductCard({
 
   // Render Life Path Indicator
   const renderLifePath = () => (
-    <div className="mt-4 mb-1 border-t border-slc-divider pt-3">
-      <div className="life-path justify-between px-1">
-        <div className="flex flex-col items-center gap-1">
-          <div className="life-path-dot bg-slc-smoke text-slc-steel rounded-full">📦</div>
-          <span className="text-[9px] font-bold text-slc-steel uppercase">Return</span>
-        </div>
-        <div className="life-path-line" />
-        <div className="flex flex-col items-center gap-1">
-          <div className="life-path-dot bg-slc-amber-light text-slc-amber rounded-full">🤖</div>
-          <span className="text-[9px] font-bold text-slc-steel uppercase">Grade</span>
-        </div>
-        <div className="life-path-line" />
-        <div className="flex flex-col items-center gap-1">
-          <div className="life-path-dot bg-blue-50 text-blue-500 rounded-full">✅</div>
-          <span className="text-[9px] font-bold text-slc-steel uppercase">Route</span>
-        </div>
-        <div className="life-path-line" />
-        <div className="flex flex-col items-center gap-1">
-          <div className="life-path-dot bg-slc-leaf-light text-slc-leaf rounded-full">💚</div>
-          <span className="text-[9px] font-bold text-slc-steel uppercase">Earn</span>
-        </div>
-      </div>
+    <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20">
+      <div className="life-path-dot bg-slc-smoke text-slc-steel rounded-full p-1" title="Used"><Package className="w-3.5 h-3.5" /></div>
+      <div className="w-px h-3 bg-white/50 mx-auto" />
+      <div className="life-path-dot bg-slc-amber-light text-slc-amber rounded-full p-1" title="AI Inspected"><Bot className="w-3.5 h-3.5" /></div>
+      <div className="w-px h-3 bg-white/50 mx-auto" />
+      <div className="life-path-dot bg-blue-50 text-blue-500 rounded-full p-1" title="Verified"><CheckCircle className="w-3.5 h-3.5" /></div>
+      <div className="w-px h-3 bg-white/50 mx-auto" />
+      <div className="life-path-dot bg-slc-leaf-light text-slc-leaf rounded-full p-1" title="Ready"><Heart className="w-3.5 h-3.5" /></div>
     </div>
   );
 
@@ -85,6 +73,7 @@ export default function ProductCard({
 
       {/* Image Section */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-slc-smoke">
+        {renderLifePath()}
         <Image 
           src={imgUrl} 
           alt={product.name} 
@@ -94,19 +83,11 @@ export default function ProductCard({
         
         {/* Marketplace Badges */}
         {isMarketplace && product.condition_label && (
-          <div className={`absolute top-3 left-3 px-2 py-0.5 text-xs font-bold rounded-md border bg-white/95 ${
-            product.condition_label.includes("New") ? "border-slc-leaf text-slc-leaf" :
-            product.condition_label.includes("Good") ? "border-slc-sky text-slc-sky" :
-            "border-slc-amber text-slc-amber"
-          }`}>
-            {product.condition_label.includes("New") ? "✨ " : product.condition_label.includes("Good") ? "✅ " : "😐 "}
-            {product.condition_label}
-          </div>
-        )}
-
-        {isMarketplace && (
-          <div className="absolute top-3 right-3 bg-slc-ink/80 text-white text-xs px-2 py-0.5 rounded-md font-semibold">
-            🤖 AI Verified
+          <div className="absolute top-3 right-3">
+             <span className="bg-slc-cloud text-slc-ink px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider flex items-center">
+              {product.condition_label.includes("New") ? <Sparkles className="w-3 h-3 inline mr-1" /> : product.condition_label.includes("Good") ? <CheckCircle className="w-3 h-3 inline mr-1" /> : <Activity className="w-3 h-3 inline mr-1" />}
+              {product.condition_label}
+            </span>
           </div>
         )}
 
@@ -144,57 +125,40 @@ export default function ProductCard({
           </div>
         )}
 
-        {/* Stars */}
-        {!isMarketplace && (
-          <div className="flex items-center gap-1 mb-2">
-            <span className="text-slc-amber text-sm">★★★★☆</span>
-            <span className="text-slc-ink text-sm font-bold ml-1">4.2</span>
-            <span className="text-slc-steel text-sm">(438)</span>
-          </div>
-        )}
-
         {/* AI Grade for Marketplace */}
         {isMarketplace && product.ai_grade && (
           <div className="mb-2">
-            <span className="bg-slc-leaf-light text-slc-leaf text-xs font-semibold px-2 py-0.5 rounded">
-              AI Grade: {product.ai_grade}
+            <span className="bg-slc-amber-light text-slc-amber-dark px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider flex items-center w-fit">
+              <Bot className="w-3 h-3 mr-1" /> AI Grade: {product.ai_grade}
             </span>
           </div>
         )}
 
-        {/* Seller Info */}
-        {isMarketplace && (
-          <div className="flex items-center gap-1.5 mb-2 mt-1">
-            <div className="w-3.5 h-3.5 bg-slc-leaf rounded-full flex items-center justify-center text-white text-[8px] font-bold">✓</div>
-            <span className="text-xs text-slc-steel font-medium">SecondLife Verified Seller</span>
-          </div>
-        )}
-
         <div className="mt-auto">
-          {renderLifePath()}
-
-          {/* Expanded details (Marketplace only) */}
-          {isMarketplace && isExpanded && product.description && (
-            <div className="py-3 text-sm text-slc-steel line-clamp-3 mb-2 border-t border-slc-divider">
-              {product.description}
-            </div>
-          )}
-
           {/* CTA Row */}
           {isMarketplace ? (
-            <div className="border-t border-slc-divider pt-3 flex gap-2">
-              <button 
-                onClick={(e) => { e.stopPropagation(); if (isExpanded) { onCollapse?.(); } else { onClick(); } }}
-                className="flex-1 border border-slc-divider text-slc-ink text-sm font-semibold py-2.5 rounded-lg hover:bg-slc-cloud transition-colors"
+            <div>
+              <div className="border-t border-slc-divider pt-3 flex gap-2">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); if (isExpanded) { onCollapse?.(); } else { onClick(); } }}
+                  className="flex-1 border border-slc-divider text-slc-ink text-sm font-semibold py-2.5 rounded-lg hover:bg-slc-cloud transition-colors"
+                >
+                  {isExpanded ? "Hide" : "View"}
+                </button>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); onPurchase?.(); }}
+                  className="flex-[2] bg-slc-amber text-slc-ink font-semibold py-2.5 rounded-lg text-sm hover:bg-yellow-500 transition-colors"
+                >
+                  Buy Now
+                </button>
+              </div>
+              <Link 
+                href={`/verify/${product.listing_id || product.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full mt-2 bg-slc-cloud hover:bg-slc-smoke text-slc-ink font-bold py-2 rounded-lg text-xs transition-colors flex items-center justify-center border border-slc-divider"
               >
-                {isExpanded ? "Hide" : "View"}
-              </button>
-              <button 
-                onClick={(e) => { e.stopPropagation(); onPurchase?.(); }}
-                className="flex-[2] bg-slc-amber text-slc-ink font-semibold py-2.5 rounded-lg text-sm hover:bg-yellow-500 transition-colors"
-              >
-                Buy Now
-              </button>
+                <ClipboardList className="w-3.5 h-3.5 mr-1.5" /> View Health Card
+              </Link>
             </div>
           ) : (
             <div className="border-t border-slc-divider pt-3 flex gap-2">

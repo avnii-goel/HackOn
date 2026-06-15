@@ -1,8 +1,10 @@
 "use client";
 
+import Link from 'next/link';
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Camera, Bot, Heart, Footprints, Baby, Package, Check, X, Pause, Search, Trophy, Leaf, CheckCircle, ShieldCheck, Recycle, DollarSign, Star, RefreshCw } from 'lucide-react';
 import ProductCard from "@/components/ProductCard";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -55,10 +57,10 @@ const getRiskLevel = (returnRate: number) => {
 };
 
 const FEED_ITEMS = [
-  { avatar: 'P', color: 'bg-red-500', text: 'Priya in Mumbai → Resold Nike shoes → +200 💚', time: '2m ago' },
+  { avatar: 'P', color: 'bg-red-500', text: <>Priya in Mumbai → Resold Nike shoes → +200 <Heart className="w-3 h-3 inline text-slc-leaf fill-current" /></>, time: '2m ago' },
   { avatar: 'R', color: 'bg-blue-500', text: 'Rahul in Delhi → Baby monitor listed → 3 buyers interested', time: '5m ago' },
   { avatar: 'A', color: 'bg-purple-600', text: 'Seller #4821 → 12 returns AI-graded → ₹890 avg recovered', time: '8m ago' },
-  { avatar: 'S', color: 'bg-orange-500', text: 'CO₂ saved today → 142 kg saved 🌿', time: '11m ago' },
+  { avatar: 'S', color: 'bg-orange-500', text: <>CO₂ saved today → 142 kg saved <Leaf className="w-3 h-3 inline text-emerald-400" /></>, time: '11m ago' },
   { avatar: 'M', color: 'bg-teal-600', text: 'Meera in Pune → iPad listed for ₹32,000 → sold in 3 hrs', time: '14m ago' },
 ];
 
@@ -204,15 +206,15 @@ export default function LandingPage() {
           <div className="animate-fade-in-up stagger-5 flex flex-col sm:flex-row gap-3 flex-wrap">
             <button
               onClick={() => router.push('/sell')}
-              className="shimmer-btn relative overflow-hidden bg-gradient-to-r from-slc-amber via-yellow-400 to-slc-amber text-slc-ink font-bold px-8 py-4 rounded-xl text-base hover:scale-[1.03] active:scale-[0.97] transition-transform"
+              className="shimmer-btn relative overflow-hidden bg-gradient-to-r from-slc-amber via-yellow-400 to-slc-amber text-slc-ink font-bold px-8 py-4 rounded-xl text-base hover:scale-[1.03] active:scale-[0.97] transition-transform flex items-center gap-2 justify-center"
             >
-              📸 Sell My Used Item →
+              <Camera className="w-5 h-5" /> Sell My Used Item →
             </button>
             <button
               onClick={() => router.push('/return/49a5bb33-491a-40fd-8bf8-3c7ae1742ba8')}
-              className="glass text-white font-semibold px-8 py-4 rounded-xl text-base hover:bg-white/15 transition-colors border border-white/20"
+              className="glass text-white font-semibold px-8 py-4 rounded-xl text-base hover:bg-white/15 transition-colors border border-white/20 flex items-center gap-2 justify-center"
             >
-              ↩ Return a Purchase
+              <RefreshCw className="w-5 h-5" /> Return a Purchase
             </button>
             <button
               onClick={() => router.push('/marketplace')}
@@ -253,21 +255,21 @@ export default function LandingPage() {
 
           {[
             {
-              num: '01', icon: '📸', color: 'bg-slc-leaf-light border-slc-leaf/20',
+              num: '01', icon: <Camera className="w-6 h-6 text-slc-leaf" />, color: 'bg-slc-leaf-light border-slc-leaf/20',
               iconBg: 'bg-slc-leaf text-white',
               title: 'Upload photos',
               body: 'Snap 2–3 photos. Our AI reads surface condition, wear patterns, and functionality in under 2 seconds.',
               cta: 'Try it now →', href: '/product/1'
             },
             {
-              num: '02', icon: '🤖', color: 'bg-slc-amber-light border-slc-amber/20',
+              num: '02', icon: <Bot className="w-6 h-6 text-slc-amber" />, color: 'bg-slc-amber-light border-slc-amber/20',
               iconBg: 'bg-slc-amber text-slc-ink',
               title: 'AI decides the best path',
               body: 'Resell, Refurbish, Donate, or Recycle — the system picks what maximises value for everyone involved.',
               cta: null, href: null
             },
             {
-              num: '03', icon: '💚', color: 'bg-slc-leaf-light border-slc-leaf/20',
+              num: '03', icon: <Heart className="w-6 h-6 text-slc-leaf fill-current" />, color: 'bg-slc-leaf-light border-slc-leaf/20',
               iconBg: 'bg-slc-leaf text-white',
               title: 'Earn Green Credits',
               body: 'Credits hit your wallet instantly. Spend them in the marketplace or unlock sustainability badges.',
@@ -314,32 +316,32 @@ export default function LandingPage() {
           {[
             {
               avatar: 'P', avatarBg: 'bg-red-500', name: 'Priya, Chennai',
-              item: '👟 Nike Shoes — ₹500',
+              item: 'Nike Shoes — ₹500',
               accentBorder: 'border-l-4 border-red-400',
               accentBg: 'bg-red-50',
               problem: 'Returned shoes travelled 600km back to warehouse. Cost to relist exceeded item value. Written off.',
-              badgeOld: { color: 'bg-red-100 text-red-700', text: '❌ Old: Item liquidated at a loss' },
-              win: '✅ SecondLife: AI graded in 2s → Listed locally → Sold in 4 hrs → Priya earned ₹180 + 200 💚',
+              badgeOld: { color: 'bg-red-100 text-red-700', text: 'Old: Item liquidated at a loss' },
+              win: 'SecondLife: AI graded in 2s → Listed locally → Sold in 4 hrs → Priya earned ₹180 + 200 pts',
               winBg: 'bg-slc-leaf-light border border-slc-leaf/30'
             },
             {
               avatar: 'R', avatarBg: 'bg-blue-500', name: 'Rahul, Delhi',
-              item: '👶 Baby Monitor',
+              item: 'Baby Monitor',
               accentBorder: 'border-l-4 border-blue-400',
               accentBg: 'bg-blue-50',
               problem: "Works perfectly. Won't list on classifieds — strangers, haggling, doorstep risk. Sitting in a drawer.",
-              badgeOld: { color: 'bg-blue-100 text-blue-700', text: '⏸ Old: Gathering dust in drawer' },
-              win: '✅ Listed on SecondLife → 3 verified nearby parents notified → Sold safely → +150 💚',
+              badgeOld: { color: 'bg-blue-100 text-blue-700', text: 'Old: Gathering dust in drawer' },
+              win: 'Listed on SecondLife → 3 verified nearby parents notified → Sold safely → +150 pts',
               winBg: 'bg-slc-leaf-light border border-slc-leaf/30'
             },
             {
               avatar: 'S', avatarBg: 'bg-purple-600', name: 'Seller, Jaipur',
-              item: '📦 200 returns/month',
+              item: '200 returns/month',
               accentBorder: 'border-l-4 border-purple-400',
               accentBg: 'bg-purple-50',
               problem: "All marked 'didn't match'. All fine. Manually inspects, guesses price, re-photographs on phone.",
               badgeOld: { color: 'bg-purple-100 text-purple-700', text: '😓 Old: 40 hrs/month manual work' },
-              win: '✅ AI bulk-grades all 200 → Auto-priced → Auto-listed → ₹1.4L recovered this month',
+              win: 'AI bulk-grades all 200 → Auto-priced → Auto-listed → ₹1.4L recovered this month',
               winBg: 'bg-slc-leaf-light border border-slc-leaf/30'
             }
           ].map((story) => (
@@ -455,11 +457,73 @@ export default function LandingPage() {
         {/* Empty state */}
         {!loading && filteredProducts.length === 0 && (
           <div className="text-center py-20 bg-white rounded-2xl border border-slc-divider">
-            <p className="text-4xl mb-4">🔍</p>
+            <Search className="w-12 h-12 text-slc-steel mx-auto mb-4" />
             <h3 className="text-xl font-bold">No products in this category</h3>
             <p className="text-slc-steel mt-2">Try a different filter.</p>
           </div>
         )}
+      </div>
+    </section>
+
+    {/* ══ SELLER CTA SECTION ══════════════════════════════ */}
+    <section className="bg-slc-bark py-16 px-4 md:px-8 relative overflow-hidden">
+      {/* Background orb */}
+      <div className="absolute right-0 top-0 w-96 h-96 bg-slc-leaf/10 rounded-full blur-3xl pointer-events-none" />
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          
+          {/* Left */}
+          <div>
+            <span className="bg-slc-amber/20 text-slc-amber text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
+              For Sellers
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mt-4 leading-tight">
+              200 returns a month.<br />
+              <span className="text-gradient">Zero manual work.</span>
+            </h2>
+            <p className="text-white/60 text-base mt-4 leading-relaxed max-w-md">
+              SecondLife AI bulk-grades your entire return queue in seconds. 
+              Auto-prices. Auto-lists. You just watch the recovery numbers climb.
+            </p>
+            <div className="flex flex-col gap-3 mt-6 max-w-xs">
+              {[
+                "✓  AI grades every return automatically",
+                "✓  Personalised insights for your store type",
+                "✓  ₹1.4L recovered by one seller last month",
+              ].map(point => (
+                <p key={point} className="text-white/80 text-sm font-medium">{point}</p>
+              ))}
+            </div>
+            <button
+              onClick={() => router.push('/seller')}
+              className="mt-8 bg-slc-amber hover:bg-yellow-500 text-slc-ink font-bold px-8 py-4 rounded-xl text-base transition-colors glow-amber"
+            >
+              Open Seller Intelligence Hub →
+            </button>
+          </div>
+
+          {/* Right — mini stat preview */}
+          <div className="glass rounded-3xl p-6 space-y-4">
+            <p className="text-white/50 text-xs uppercase tracking-widest font-bold mb-4">
+              This month's seller snapshot
+            </p>
+            {[
+              { label: "Returns auto-graded", val: "212", icon: <Bot className="w-5 h-5 text-slc-leaf" />, color: "text-slc-leaf" },
+              { label: "Value recovered", val: "₹1,41,480", icon: <DollarSign className="w-5 h-5 text-slc-amber" />, color: "text-slc-amber" },
+              { label: "Manual inspections done", val: "0", icon: <CheckCircle className="w-5 h-5 text-white" />, color: "text-white" },
+              { label: "CO₂ prevented", val: "18.4 kg", icon: <Leaf className="w-5 h-5 text-emerald-400" />, color: "text-emerald-400" },
+            ].map(stat => (
+              <div key={stat.label} className="flex items-center justify-between py-3 border-b border-white/10 last:border-0">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-6 h-6">{stat.icon}</div>
+                  <span className="text-white/70 text-sm font-medium">{stat.label}</span>
+                </div>
+                <span className={`font-black font-mono text-lg ${stat.color}`}>{stat.val}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
 
@@ -490,14 +554,14 @@ export default function LandingPage() {
           <h2 className="text-3xl font-extrabold text-slc-ink tracking-tight mb-8">How we grade items</h2>
           <div className="space-y-5">
             {[
-              { icon: '⭐', bg: 'bg-slc-amber-light', iconC: 'text-slc-amber', title: 'Pristine', body: 'Indistinguishable from new. Often original factory seal or zero sign of wear.' },
-              { icon: '✅', bg: 'bg-slc-leaf-light', iconC: 'text-slc-leaf', title: 'Refurbished', body: 'Professionally restored to full functionality by certified technicians.' },
-              { icon: '🌿', bg: 'bg-blue-50', iconC: 'text-blue-600', title: 'Pre-Loved', body: 'Minor cosmetic wear, fully functional. Most sustainable choice for your wallet.' },
+              { icon: <Star className="w-6 h-6 text-slc-amber" />, bg: 'bg-slc-amber-light', iconC: 'text-slc-amber', title: 'Pristine', body: 'Indistinguishable from new. Often original factory seal or zero sign of wear.' },
+              { icon: <CheckCircle className="w-6 h-6 text-slc-leaf" />, bg: 'bg-slc-leaf-light', iconC: 'text-slc-leaf', title: 'Refurbished', body: 'Professionally restored to full functionality by certified technicians.' },
+              { icon: <Leaf className="w-6 h-6 text-blue-600" />, bg: 'bg-blue-50', iconC: 'text-blue-600', title: 'Pre-Loved', body: 'Minor cosmetic wear, fully functional. Most sustainable choice for your wallet.' },
             ].map((grade) => (
               <div key={grade.title}
                 className="card-3d-subtle flex items-start gap-4 bg-[#F0F2F2] rounded-2xl p-5 border border-slc-divider hover:border-slc-leaf/30 transition-colors"
               >
-                <div className={`w-11 h-11 rounded-xl ${grade.bg} flex items-center justify-center text-xl shrink-0 shadow-sm`}>
+                <div className={`w-11 h-11 rounded-xl ${grade.bg} flex items-center justify-center shrink-0 shadow-sm`}>
                   {grade.icon}
                 </div>
                 <div>
@@ -515,10 +579,10 @@ export default function LandingPage() {
     <section className="bg-slc-bark py-12">
       <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
         {[
-          { icon: '🤖', title: 'AI-graded in 2 seconds', sub: 'LLaMA 4 Vision — not guesswork' },
-          { icon: '🔒', title: 'Amazon-trusted payments', sub: 'Same checkout you already know' },
-          { icon: '🌿', title: 'Carbon impact tracked', sub: 'Every kg CO₂ saved, shown to you' },
-          { icon: '♻️', title: 'Nothing goes to landfill', sub: 'Donate, recycle, resell — always' },
+          { icon: <Bot className="w-6 h-6 text-white" />, title: 'AI-graded in 2 seconds', sub: 'LLaMA 4 Vision — not guesswork' },
+          { icon: <ShieldCheck className="w-6 h-6 text-white" />, title: 'Amazon-trusted payments', sub: 'Same checkout you already know' },
+          { icon: <Leaf className="w-6 h-6 text-white" />, title: 'Carbon impact tracked', sub: 'Every kg CO₂ saved, shown to you' },
+          { icon: <Recycle className="w-6 h-6 text-white" />, title: 'Nothing goes to landfill', sub: 'Donate, recycle, resell — always' },
         ].map((trust) => (
           <div key={trust.title} className="flex items-start gap-4">
             <div className="w-12 h-12 glass rounded-xl flex items-center justify-center text-2xl shrink-0">
@@ -538,7 +602,7 @@ export default function LandingPage() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-10">
         <div className="max-w-xs">
           <div className="text-white font-black text-xl mb-1 flex items-center gap-2">
-            🌿 SecondLife
+            <Leaf className="w-4 h-4 inline mr-1 text-slc-leaf" /> SecondLife
           </div>
           <div className="text-slc-amber text-[10px] font-bold tracking-widest uppercase mb-3">by Amazon</div>
           <p className="text-white/40 text-xs leading-relaxed">

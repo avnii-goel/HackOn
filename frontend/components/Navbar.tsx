@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Search, Menu, X, Moon, Sun } from "lucide-react";
+import { Search, Menu, X, Moon, Sun, Leaf, Heart } from "lucide-react";
 import { useTheme } from "next-themes";
 
 function CategoryBar() {
@@ -11,10 +11,10 @@ function CategoryBar() {
   const activeCategory = searchParams.get("category") || "";
   return (
     <div className="h-9 bg-slc-bark border-t border-white/10 hidden md:flex items-center px-8 gap-6 overflow-x-auto shadow-sm">
-      {["All Departments", "Electronics", "Clothing", "Home & Kitchen", "Books", "Sports", "🌿 Eco Picks"].map((cat) => {
-        const catSlug = cat.replace("🌿 ", "").toLowerCase();
+      {["All Departments", "Electronics", "Clothing", "Home & Kitchen", "Books", "Sports", "Eco Picks"].map((cat) => {
+        const catSlug = cat.toLowerCase().replace(" ", "-");
         const isActive = activeCategory.toLowerCase() === catSlug ||
-                         (catSlug === "all departments" && !activeCategory);
+                         (catSlug === "all-departments" && !activeCategory);
         return (
           <Link
             key={cat}
@@ -23,7 +23,9 @@ function CategoryBar() {
               isActive ? "text-slc-amber font-bold underline underline-offset-4" : "text-white hover:text-slc-amber"
             }`}
           >
-            {cat}
+            {cat === "Eco Picks" ? (
+              <span className="flex items-center gap-1.5"><Leaf className="w-3.5 h-3.5" /> {cat}</span>
+            ) : cat}
           </Link>
         );
       })}
@@ -55,6 +57,7 @@ export default function Navbar() {
   const [credits, setCredits] = useState<number>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const pathname = usePathname();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,7 +99,7 @@ export default function Navbar() {
             </button>
             <Link href="/" className="flex flex-col">
               <span className="text-white font-bold text-xl leading-tight flex items-center gap-1">
-                🌿 SecondLife
+                <Leaf className="w-5 h-5 text-slc-leaf" /> SecondLife
               </span>
               <span className="text-slc-amber text-[10px] font-bold tracking-wider leading-none">
                 by Amazon
@@ -138,8 +141,8 @@ export default function Navbar() {
             </Link>
 
             <Link href="/dashboard" className="flex items-center gap-2 hover:border-white border border-transparent p-1 rounded-sm">
-              <div className="bg-slc-leaf text-white px-2 py-1 rounded text-xs font-bold font-mono border border-slc-leaf-dark shadow-sm">
-                💚 {credits}
+              <div className="bg-slc-leaf text-white px-2 py-1 rounded text-xs font-bold font-mono border border-slc-leaf-dark shadow-sm flex items-center gap-1">
+                <Heart className="w-3 h-3 fill-current" /> {credits}
               </div>
               <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner border border-white/20 shrink-0">
                 P

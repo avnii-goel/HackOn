@@ -3,7 +3,10 @@ sys.path.append(os.path.dirname(__file__))
 from services.supabase_service import supabase
 
 UPDATES = {
-    "Fabindia Linen Kurta Set — XL": "https://images.unsplash.com/photo-1727835523545-70ee992b5763?w=600&q=80",
+    "Apple MacBook Air M2 13\"": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80",
+    "Adidas Ultraboost 22 Running Shoes — UK9": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
+    "Fabindia Linen Kurta Set — XL": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80",
+    "Decathlon Domyos 500 Yoga Mat — 6mm": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80",
 }
 
 def fix_images():

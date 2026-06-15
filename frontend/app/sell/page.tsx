@@ -3,16 +3,17 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Headphones, Shirt, Home, Book, Activity, Package, Camera, Bot, Leaf, Search, BarChart, Lightbulb, CheckCircle, UploadCloud, FileText, AlertCircle, Tag, Wrench, Heart, RefreshCw } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const CATEGORIES = [
-  { label: "Electronics", emoji: "🎧" },
-  { label: "Clothing", emoji: "👕" },
-  { label: "Home & Kitchen", emoji: "🏠" },
-  { label: "Books", emoji: "📚" },
-  { label: "Sports", emoji: "⚽" },
-  { label: "Other", emoji: "📦" },
+  { label: "Electronics", icon: <Headphones className="w-5 h-5 text-slc-ink" /> },
+  { label: "Clothing", icon: <Shirt className="w-5 h-5 text-slc-ink" /> },
+  { label: "Home & Kitchen", icon: <Home className="w-5 h-5 text-slc-ink" /> },
+  { label: "Books", icon: <Book className="w-5 h-5 text-slc-ink" /> },
+  { label: "Sports", icon: <Activity className="w-5 h-5 text-slc-ink" /> },
+  { label: "Other", icon: <Package className="w-5 h-5 text-slc-ink" /> },
 ];
 
 interface AnalysisResult {
@@ -42,10 +43,10 @@ export default function SellPage() {
   const [loadingMsg, setLoadingMsg] = useState(0);
 
   const loadingMessages = [
-    "🔍 Scanning surface condition...",
-    "📊 Detecting wear patterns...",
-    "💡 Computing optimal price...",
-    "🌿 Calculating your carbon impact...",
+    <><Search className="w-5 h-5 inline mr-2 text-slc-leaf" /> Scanning surface condition...</>,
+    <><BarChart className="w-5 h-5 inline mr-2 text-slc-leaf" /> Detecting wear patterns...</>,
+    <><Lightbulb className="w-5 h-5 inline mr-2 text-slc-leaf" /> Computing optimal price...</>,
+    <><Leaf className="w-5 h-5 inline mr-2 text-slc-leaf" /> Calculating your carbon impact...</>,
   ];
 
   useEffect(() => {
@@ -189,7 +190,7 @@ export default function SellPage() {
         </div>
         <div className="max-w-3xl mx-auto relative z-10 text-center">
           <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 text-sm font-semibold">
-            <span>📸</span> AI-Powered Listing
+            <Camera className="w-4 h-4" /> AI-Powered Listing
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight mb-2">
             Sell Your Used Item
@@ -250,7 +251,7 @@ export default function SellPage() {
               <div className="bg-gradient-to-r from-slc-leaf/5 to-slc-amber/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
                   <span className="w-8 h-8 bg-slc-leaf/10 rounded-lg flex items-center justify-center">
-                    📸
+                    <Camera className="w-5 h-5 text-slc-leaf" />
                   </span>
                   Upload Photos
                 </h2>
@@ -277,7 +278,7 @@ export default function SellPage() {
                   {previewUrls.length === 0 ? (
                     <div className="text-center pointer-events-none px-4">
                       <div className="w-16 h-16 bg-slc-leaf/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                        <span className="text-3xl">📷</span>
+                        <Camera className="w-8 h-8 text-slc-leaf" />
                       </div>
                       <p className="text-slc-ink font-semibold">
                         Tap to upload or drag photos here
@@ -338,7 +339,7 @@ export default function SellPage() {
               <div className="bg-gradient-to-r from-slc-leaf/5 to-slc-amber/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
                   <span className="w-8 h-8 bg-slc-amber/10 rounded-lg flex items-center justify-center">
-                    📋
+                    <FileText className="w-5 h-5 text-slc-amber" />
                   </span>
                   Product Details
                 </h2>
@@ -374,8 +375,10 @@ export default function SellPage() {
                             : "bg-white text-slc-ink border-slc-divider hover:border-slc-leaf/50 hover:bg-slc-leaf/5"
                         }`}
                       >
-                        <span>{cat.emoji}</span>
-                        <span className="truncate">{cat.label}</span>
+                        <div className="flex items-center gap-3">
+                          <span>{cat.icon}</span>
+                          <span className="font-bold">{cat.label}</span>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -419,7 +422,7 @@ export default function SellPage() {
                           : "bg-white text-slc-ink border-slc-divider hover:border-slc-leaf/50"
                       }`}
                     >
-                      ✅ Yes, works perfectly
+                      <CheckCircle className="w-5 h-5" /> Yes, works perfectly
                     </button>
                     <button
                       onClick={() => setIsFunctional(false)}
@@ -429,7 +432,7 @@ export default function SellPage() {
                           : "bg-white text-slc-ink border-slc-divider hover:border-amber-300"
                       }`}
                     >
-                      ⚠️ Has some issues
+                      <AlertCircle className="w-5 h-5" /> Has some issues
                     </button>
                   </div>
                 </div>
@@ -447,9 +450,9 @@ export default function SellPage() {
                     rows={2}
                     className="w-full border border-slc-divider rounded-xl px-4 py-3 text-slc-ink focus:outline-none focus:border-slc-leaf focus:ring-2 focus:ring-slc-leaf/20 bg-slc-cloud/30 resize-none text-sm transition-all placeholder:text-slc-steel/60"
                   />
-                  <p className="text-xs text-slc-steel mt-1.5 flex items-center gap-1">
-                    <span>💡</span> More detail = more accurate pricing
-                  </p>
+                  <div className="text-xs text-slc-steel mt-2 flex items-center gap-1.5 font-medium px-1">
+                    <span><Lightbulb className="w-4 h-4 inline" /></span> More detail = more accurate pricing
+                  </div>
                 </div>
               </div>
             </div>
@@ -461,7 +464,7 @@ export default function SellPage() {
                 disabled={!canAnalyze}
                 className="bg-gradient-to-r from-slc-leaf to-slc-leaf-dark text-white font-bold text-lg py-4 px-12 rounded-xl shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all w-full max-w-md"
               >
-                🤖 Get AI Valuation →
+                <Bot className="w-5 h-5 inline mr-2" /> Get AI Valuation →
               </button>
               {!canAnalyze && (
                 <p className="text-xs text-slc-steel mt-3">
@@ -557,14 +560,14 @@ export default function SellPage() {
                 />
               </div>
               <div className="relative z-10">
-                <div className="text-6xl mb-3">
-                  {result.action === "resell"
-                    ? "🏆"
-                    : result.action === "refurbish"
-                    ? "🔧"
-                    : result.action === "donate"
-                    ? "❤️"
-                    : "♻️"}
+                <div className="text-6xl mb-4">
+                  {result.action === "resell" 
+                  ? <Tag className="w-16 h-16 inline text-white" /> 
+                  : result.action === "refurbish" 
+                  ? <Wrench className="w-16 h-16 inline text-white" />
+                  : result.action === "donate"
+                  ? <Heart className="w-16 h-16 inline text-white fill-current" />
+                  : <RefreshCw className="w-16 h-16 inline text-white" />}
                 </div>
                 <p className="text-xs font-bold tracking-[0.2em] uppercase text-white/60 mb-2">
                   AI VERDICT
@@ -637,8 +640,8 @@ export default function SellPage() {
             {/* Product Card */}
             <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
               <div className="bg-slc-leaf/5 px-5 py-3 border-b border-slc-divider/30">
-                <h3 className="font-bold text-slc-ink flex items-center gap-2 text-sm">
-                  📋 Product Health Card
+                <h3 className="font-bold text-slc-ink mb-3 flex items-center gap-2">
+                  <Bot className="w-5 h-5 text-slc-amber" /> AI Analysis
                 </h3>
               </div>
               <div className="p-5 grid grid-cols-2 gap-3">
@@ -658,8 +661,8 @@ export default function SellPage() {
                   <p className="text-[10px] font-bold text-slc-steel uppercase">
                     AI Grade
                   </p>
-                  <p className="text-sm font-bold text-slc-leaf mt-1">
-                    {result.condition_label} ✅
+                  <p className="text-slc-ink font-extrabold flex items-center gap-1">
+                    {result.condition_label} <CheckCircle className="w-4 h-4 inline text-slc-leaf" />
                   </p>
                 </div>
                 <div className="bg-slc-cloud/50 rounded-xl p-3 text-center">
@@ -676,7 +679,7 @@ export default function SellPage() {
             {/* AI Reasoning */}
             <div className="bg-slc-bark text-white rounded-2xl p-5 shadow-lg">
               <h4 className="text-xs uppercase tracking-[0.15em] text-white/40 mb-2 font-bold flex items-center gap-2">
-                🤖 AI Analysis
+                <Bot className="w-5 h-5 inline mr-1 text-slc-amber" /> AI Analysis
               </h4>
               <p className="italic text-white/85 text-sm leading-relaxed">
                 &quot;{result.reasoning}&quot;

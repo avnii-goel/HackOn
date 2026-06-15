@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import { useToast } from "@/components/Toast";
+import { Search, MapPin, SlidersHorizontal, Leaf, Bot, ShieldCheck, Recycle, Package, Coins, Truck } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -85,12 +86,12 @@ function MarketplaceContent() {
       });
       if (res.ok) {
         setListings((prev) => prev.filter((l) => l.id !== listingId));
-        showToast("🎉 Purchased! +150 💚 added to your wallet");
+        showToast("Purchased! +150 credits added to your wallet");
       } else throw new Error("Purchase failed");
     } catch (err) {
       // Fake success for hackathon if backend fails
       setListings((prev) => prev.filter((l) => l.id !== listingId));
-      showToast("🎉 Purchased! +150 💚 added to your wallet");
+      showToast("Purchased! +150 credits added to your wallet");
     }
   };
 
@@ -143,14 +144,14 @@ function MarketplaceContent() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <span className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap">📦 1.2M Items</span>
-              <span className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap">🌿 840K kg CO₂</span>
-              <span className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap">💰 ₹24Cr Value</span>
+              <span className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold flex items-center gap-1.5 whitespace-nowrap"><Package className="w-4 h-4" /> 1.2M Items</span>
+              <span className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold flex items-center gap-1.5 whitespace-nowrap"><Leaf className="w-4 h-4" /> 840K kg CO₂</span>
+              <span className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold flex items-center gap-1.5 whitespace-nowrap"><Coins className="w-4 h-4" /> ₹24Cr Value</span>
             </div>
           </div>
 
           <div className="flex flex-wrap gap-3">
-            {["All Conditions", "Like New ✨", "Good ✅", "Fair 😐"].map((filter) => (
+            {["All Conditions", "Like New", "Good", "Fair"].map((filter) => (
               <button
                 key={filter}
                 onClick={() => {
@@ -181,7 +182,7 @@ function MarketplaceContent() {
           </div>
         ) : filteredListings.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-xl border border-slc-divider">
-            <p className="text-4xl mb-4">🌿</p>
+            <Leaf className="w-12 h-12 text-slc-steel mx-auto mb-4" />
             <h3 className="text-xl font-bold text-slc-ink mb-2">No items found</h3>
             <p className="text-slc-steel">Check back later or change your filters.</p>
           </div>
@@ -221,28 +222,28 @@ function MarketplaceContent() {
       <div className="bg-slc-cloud border-t border-slc-divider py-12 mt-auto">
         <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm border border-slc-divider shrink-0">🤖</div>
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-slc-leaf"><Bot className="w-6 h-6" /></div>
             <div>
               <h4 className="text-slc-ink font-bold text-sm">AI-Verified</h4>
               <p className="text-slc-steel text-xs font-medium">No fake listings</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm border border-slc-divider shrink-0">🔒</div>
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-slc-ink"><ShieldCheck className="w-6 h-6" /></div>
             <div>
               <h4 className="text-slc-ink font-bold text-sm">Secure Payment</h4>
               <p className="text-slc-steel text-xs font-medium">Amazon protection</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm border border-slc-divider shrink-0">🚚</div>
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-amber-500"><Truck className="w-6 h-6" /></div>
             <div>
               <h4 className="text-slc-ink font-bold text-sm">Fast Delivery</h4>
               <p className="text-slc-steel text-xs font-medium">Local fulfillment</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm border border-slc-divider shrink-0">♻️</div>
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-blue-500"><Recycle className="w-6 h-6" /></div>
             <div>
               <h4 className="text-slc-ink font-bold text-sm">Eco-Friendly</h4>
               <p className="text-slc-steel text-xs font-medium">Zero waste</p>

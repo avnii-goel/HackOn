@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { Tag, Wrench, Gift, ShoppingCart, RefreshCw, Heart, AlertTriangle, Leaf, Lightbulb, Camera, ShoppingBag, Car, Zap, Trophy, Medal } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -39,14 +40,14 @@ interface LeaderboardUser {
   co2_saved_kg: number;
 }
 
-function getActionIcon(type: string): string {
+function getActionIcon(type: string): any {
   switch (type) {
-    case "resell_submitted": return "🏷️";
-    case "refurb_purchased": return "🔧";
-    case "donated": return "🎁";
-    case "purchase": return "🛒";
-    case "normal_return": return "↩️";
-    default: return "💚";
+    case "resell_submitted": return <Tag className="w-4 h-4 text-slc-leaf" />;
+    case "refurb_purchased": return <Wrench className="w-4 h-4 text-blue-500" />;
+    case "donated": return <Gift className="w-4 h-4 text-amber-500" />;
+    case "purchase": return <ShoppingCart className="w-4 h-4 text-purple-500" />;
+    case "normal_return": return <RefreshCw className="w-4 h-4 text-slc-steel" />;
+    default: return <Heart className="w-4 h-4 text-slc-leaf fill-current" />;
   }
 }
 
@@ -136,7 +137,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-slc-cloud flex items-center justify-center">
         <div className="text-center">
-          <p className="text-4xl mb-4">⚠️</p>
+          <AlertTriangle className="w-10 h-10 text-slc-amber mx-auto mb-4" />
           <h2 className="text-xl font-bold">Could not load dashboard</h2>
           <button onClick={() => router.push("/")} className="mt-4 bg-slc-leaf text-white px-6 py-2 rounded-xl font-bold">Go Home</button>
         </div>
@@ -152,11 +153,11 @@ export default function DashboardPage() {
   const userName = wallet.user?.name || "Shourya";
 
   // Level system
-  let level = "Seedling 🌱";
+  let level = "Seed";
   let nextThreshold = 500;
-  if (credits >= 2000) { level = "Forest 🌳"; nextThreshold = credits; }
-  else if (credits >= 1000) { level = "Tree 🌲"; nextThreshold = 2000; }
-  else if (credits >= 500) { level = "Sapling 🌿"; nextThreshold = 1000; }
+  if (credits >= 2000) { level = "Forest"; nextThreshold = credits; }
+  else if (credits >= 1000) { level = "Tree"; nextThreshold = 2000; }
+  else if (credits >= 500) { level = "Sapling"; nextThreshold = 1000; }
   const progressPct = Math.min(100, (credits / nextThreshold) * 100);
 
   return (
@@ -177,11 +178,11 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="flex flex-wrap gap-3 mt-4">
-            <div className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold">
-              🏆 Rank #{rank}
+            <div className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold flex items-center gap-1.5">
+              <Trophy className="w-3.5 h-3.5" /> Rank #{rank}
             </div>
-            <div className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold">
-              {level}
+            <div className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold flex items-center gap-1.5">
+              <Leaf className="w-3.5 h-3.5" /> {level}
             </div>
             <div className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm font-semibold">
               {transactions.length} actions taken
@@ -218,7 +219,7 @@ export default function DashboardPage() {
             <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-slc-leaf/5 to-sky-500/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
-                  <span className="w-8 h-8 bg-slc-leaf/10 rounded-lg flex items-center justify-center">🌍</span>
+                  <Leaf className="w-5 h-5 text-slc-leaf" />
                   Environmental Impact
                 </h2>
               </div>
@@ -242,17 +243,17 @@ export default function DashboardPage() {
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="bg-slc-cloud/70 rounded-xl p-3 text-center border border-slc-divider/30">
-                    <p className="text-xl mb-0.5">🌳</p>
+                    <p className="flex justify-center mb-0.5"><Leaf className="w-5 h-5 text-slc-leaf" /></p>
                     <p className="text-lg font-extrabold text-slc-ink font-mono">{Math.round(co2 * 0.5)}</p>
                     <p className="text-[9px] font-bold text-slc-steel uppercase tracking-wider">Trees Equiv.</p>
                   </div>
                   <div className="bg-slc-cloud/70 rounded-xl p-3 text-center border border-slc-divider/30">
-                    <p className="text-xl mb-0.5">🚗</p>
+                    <p className="flex justify-center mb-0.5"><Car className="w-5 h-5 text-blue-500" /></p>
                     <p className="text-lg font-extrabold text-slc-ink font-mono">{Math.round(co2 * 4)}</p>
                     <p className="text-[9px] font-bold text-slc-steel uppercase tracking-wider">Km Saved</p>
                   </div>
                   <div className="bg-slc-cloud/70 rounded-xl p-3 text-center border border-slc-divider/30">
-                    <p className="text-xl mb-0.5">💡</p>
+                    <p className="flex justify-center mb-0.5"><Lightbulb className="w-5 h-5 text-amber-500" /></p>
                     <p className="text-lg font-extrabold text-slc-ink font-mono">{Math.round(co2 * 12)}</p>
                     <p className="text-[9px] font-bold text-slc-steel uppercase tracking-wider">Hrs LED</p>
                   </div>
@@ -264,7 +265,7 @@ export default function DashboardPage() {
             <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-amber-500/5 to-slc-leaf/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
-                  <span className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center">📋</span>
+                  <Zap className="w-5 h-5 text-amber-500" />
                   Recent Activity
                 </h2>
               </div>
@@ -327,7 +328,7 @@ export default function DashboardPage() {
             <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-amber-500/5 to-orange-500/5 px-5 py-3 border-b border-slc-divider/30">
                 <h3 className="font-bold text-slc-ink flex items-center gap-2">
-                  🏆 Green Champions
+                  <Trophy className="w-4 h-4 text-amber-500" /> Green Champions
                 </h3>
               </div>
               <div className="p-3">
@@ -358,21 +359,27 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
-              <button onClick={() => router.push("/sell")} className="w-full flex items-center gap-3 px-5 py-4 border-b border-slc-divider/50 hover:bg-slc-cloud/50 transition-colors text-left">
-                <span className="w-9 h-9 bg-slc-leaf/10 rounded-xl flex items-center justify-center">📸</span>
-                <span className="text-sm font-bold text-slc-ink">Sell an Item</span>
-                <span className="ml-auto text-slc-steel text-xs">→</span>
+            <div className="space-y-3">
+              <button onClick={() => router.push('/sell')} className="w-full bg-white border border-slc-divider hover:border-slc-leaf/30 rounded-2xl p-5 flex items-center gap-4 transition-all hover:shadow-md card-3d-subtle">
+                <span className="w-9 h-9 bg-slc-leaf/10 text-slc-leaf rounded-xl flex items-center justify-center"><Camera className="w-5 h-5" /></span>
+                <div className="text-left">
+                  <h4 className="font-bold text-slc-ink text-sm">Sell an Item</h4>
+                  <p className="text-xs text-slc-steel mt-0.5">Earn credits via AI grading</p>
+                </div>
               </button>
-              <button onClick={() => router.push("/marketplace")} className="w-full flex items-center gap-3 px-5 py-4 border-b border-slc-divider/50 hover:bg-slc-cloud/50 transition-colors text-left">
-                <span className="w-9 h-9 bg-amber-500/10 rounded-xl flex items-center justify-center">🛍️</span>
-                <span className="text-sm font-bold text-slc-ink">Browse Marketplace</span>
-                <span className="ml-auto text-slc-steel text-xs">→</span>
+              <button onClick={() => router.push('/marketplace')} className="w-full bg-white border border-slc-divider hover:border-slc-leaf/30 rounded-2xl p-5 flex items-center gap-4 transition-all hover:shadow-md card-3d-subtle">
+                <span className="w-9 h-9 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center"><ShoppingBag className="w-5 h-5" /></span>
+                <div className="text-left">
+                  <h4 className="font-bold text-slc-ink text-sm">Shop Pre-Loved</h4>
+                  <p className="text-xs text-slc-steel mt-0.5">Spend credits on discounts</p>
+                </div>
               </button>
-              <button onClick={() => router.push(`/return/49a5bb33-491a-40fd-8bf8-3c7ae1742ba8`)} className="w-full flex items-center gap-3 px-5 py-4 hover:bg-slc-cloud/50 transition-colors text-left">
-                <span className="w-9 h-9 bg-sky-500/10 rounded-xl flex items-center justify-center">↩️</span>
-                <span className="text-sm font-bold text-slc-ink">Return a Purchase</span>
-                <span className="ml-auto text-slc-steel text-xs">→</span>
+              <button onClick={() => router.push('/return/49a5bb33-491a-40fd-8bf8-3c7ae1742ba8')} className="w-full bg-white border border-slc-divider hover:border-slc-leaf/30 rounded-2xl p-5 flex items-center gap-4 transition-all hover:shadow-md card-3d-subtle">
+                <span className="w-9 h-9 bg-sky-500/10 text-sky-500 rounded-xl flex items-center justify-center"><RefreshCw className="w-5 h-5" /></span>
+                <div className="text-left">
+                  <h4 className="font-bold text-slc-ink text-sm">Return a Purchase</h4>
+                  <p className="text-xs text-slc-steel mt-0.5">Smart routing for refunds</p>
+                </div>
               </button>
             </div>
           </div>

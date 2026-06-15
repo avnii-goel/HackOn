@@ -1,4 +1,5 @@
 "use client";
+import { Search, Recycle, AlertTriangle, Leaf, CheckCircle, Package, Bot, Heart } from 'lucide-react';
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
@@ -180,7 +181,7 @@ export default function ProductPage() {
               ))}
             </div>
             <p className="text-xs text-slc-steel mt-4 flex items-center gap-1 font-semibold">
-              <span className="text-sm">🔍</span> AI will analyze these photos when you initiate return
+              <Search className="w-4 h-4 inline text-slc-steel" /> AI will analyze these photos when you initiate return
             </p>
           </div>
 
@@ -190,7 +191,7 @@ export default function ProductPage() {
             {/* Amazon's Choice */}
             {product.id === "1" && (
               <div className="bg-slc-sky text-white text-xs font-bold px-2 py-0.5 rounded inline-block w-fit mb-2">
-                Amazon&apos;s Choice ♻️ for &apos;refurbished headphones&apos;
+                Amazon&apos;s Choice <Recycle className="w-4 h-4 inline text-blue-500" /> for &apos;refurbished headphones&apos;
               </div>
             )}
 
@@ -229,12 +230,12 @@ export default function ProductPage() {
             {riskData.return_rate > 10 && (
               <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 mb-5 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl">⚠️</span>
+                  <AlertTriangle className="w-8 h-8 text-slc-amber" />
                   <div>
                     <p className="font-bold text-amber-900">{riskData.return_rate}% of buyers return this item</p>
                     <p className="text-sm text-amber-800/80 font-medium">Most common reason: {reasons[0] || "Doesn't meet expectations"}</p>
                     {riskData.prevention_tip && (
-                      <p className="text-sm text-slc-leaf font-bold mt-1">🌿 Tip: {riskData.prevention_tip}</p>
+                      <p className="text-sm text-slc-leaf font-bold mt-1 flex items-center gap-1.5"><Leaf className="w-4 h-4" /> Tip: {riskData.prevention_tip}</p>
                     )}
                   </div>
                 </div>
@@ -262,7 +263,7 @@ export default function ProductPage() {
                 </div>
                 <div className="bg-white rounded-lg p-3 text-center border border-slc-divider">
                   <p className="text-[10px] uppercase font-bold text-slc-steel tracking-wider mb-1">AI Grade</p>
-                  <p className="text-lg font-bold text-slc-ink leading-none mt-1">Good ✅</p>
+                  <p className="text-lg font-bold text-slc-ink leading-none mt-1 flex items-center gap-1">Good <CheckCircle className="w-4 h-4 text-slc-leaf" /></p>
                 </div>
                 <div className="bg-white rounded-lg p-3 text-center border border-slc-divider">
                   <p className="text-[10px] uppercase font-bold text-slc-steel tracking-wider mb-1">Warranty</p>
@@ -277,25 +278,32 @@ export default function ProductPage() {
               {/* Life Path Indicator */}
               <div className="life-path justify-between px-2 pt-2 border-t border-slc-leaf/20">
                 <div className="flex flex-col items-center gap-1">
-                  <div className="life-path-dot bg-white border border-slc-leaf/20 rounded-full">📦</div>
+                  <div className="life-path-dot bg-white border border-slc-leaf/20 rounded-full"><Package className="w-5 h-5 text-slc-steel" /></div>
                   <span className="text-[9px] font-bold text-slc-leaf-dark uppercase">Return</span>
                 </div>
                 <div className="life-path-line bg-slc-leaf/40" />
                 <div className="flex flex-col items-center gap-1">
-                  <div className="life-path-dot bg-white border border-slc-leaf/20 rounded-full">🤖</div>
+                  <div className="life-path-dot bg-white border border-slc-leaf/20 rounded-full"><Bot className="w-5 h-5 text-slc-amber" /></div>
                   <span className="text-[9px] font-bold text-slc-leaf-dark uppercase">Grade</span>
                 </div>
                 <div className="life-path-line bg-slc-leaf/40" />
                 <div className="flex flex-col items-center gap-1">
-                  <div className="life-path-dot bg-white border border-slc-leaf/20 rounded-full">✅</div>
+                  <div className="life-path-dot bg-white border border-slc-leaf/20 rounded-full"><CheckCircle className="w-5 h-5 text-slc-leaf" /></div>
                   <span className="text-[9px] font-bold text-slc-leaf-dark uppercase">Route</span>
                 </div>
                 <div className="life-path-line bg-slc-leaf/40" />
                 <div className="flex flex-col items-center gap-1">
-                  <div className="life-path-dot bg-slc-leaf text-white rounded-full">💚</div>
+                  <div className="life-path-dot bg-slc-leaf text-white rounded-full"><Heart className="w-5 h-5 fill-current" /></div>
                   <span className="text-[9px] font-bold text-slc-leaf-dark uppercase">Earn</span>
                 </div>
               </div>
+              
+              <button
+                onClick={() => router.push(`/verify/${product.id}`)}
+                className="w-full bg-white border border-slc-leaf/30 text-slc-leaf text-xs font-bold py-2.5 rounded-lg hover:bg-slc-cloud transition-colors mt-4 shadow-sm flex justify-center items-center gap-2"
+              >
+                <span>↗</span> View Public Certificate
+              </button>
             </div>
 
             {/* ACTION BUTTONS */}

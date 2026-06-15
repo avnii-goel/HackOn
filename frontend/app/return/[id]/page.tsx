@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import { Search, Lightbulb, Leaf, AlertTriangle, Package, RefreshCw, Camera, Bot, Heart } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -35,18 +36,18 @@ export default function ReturnPage() {
   const [progressWidth, setProgressWidth] = useState(0);
 
   const loadingMessages = [
-    "🔍 Scanning surface condition...",
+    <><Search className="w-5 h-5 inline mr-2 text-slc-leaf" /> Scanning surface condition...</>,
     "📊 Detecting wear patterns...",
-    "💡 Computing optimal lifecycle path...",
-    "🌿 Calculating your carbon impact...",
+    <><Lightbulb className="w-5 h-5 inline mr-2 text-slc-leaf" /> Computing optimal lifecycle path...</>,
+    <><Leaf className="w-5 h-5 inline mr-2 text-slc-leaf" /> Calculating your carbon impact...</>,
   ];
 
   const reasons = [
     { label: "Doesn't fit", emoji: "📏" },
-    { label: "Defective", emoji: "⚠️" },
+    { label: "Defective", emoji: <AlertTriangle className="w-5 h-5" /> },
     { label: "Changed my mind", emoji: "💭" },
-    { label: "Not as described", emoji: "🔍" },
-    { label: "Wrong item received", emoji: "📦" },
+    { label: "Not as described", emoji: <Search className="w-5 h-5" /> },
+    { label: "Wrong item received", emoji: <Package className="w-5 h-5" /> },
   ];
 
   useEffect(() => {
@@ -175,7 +176,7 @@ export default function ReturnPage() {
         </div>
         <div className="max-w-3xl mx-auto relative z-10 text-center">
           <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 text-sm font-semibold">
-            <span>↩️</span> Return & Earn
+            <RefreshCw className="w-5 h-5 text-slc-amber" /> Return & Earn
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight mb-2">Return a Purchase</h1>
           <p className="text-white/80 text-lg max-w-md mx-auto">
@@ -230,7 +231,7 @@ export default function ReturnPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-slc-divider/50 overflow-hidden">
               <div className="bg-gradient-to-r from-amber-500/5 to-orange-500/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
-                  <span className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center">📸</span>
+                  <span className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center"><Camera className="w-4 h-4 text-amber-500" /></span>
                   Upload Item Photos
                 </h2>
                 <p className="text-sm text-slc-steel mt-1 ml-10">Show the current condition clearly for best AI accuracy</p>
@@ -311,7 +312,7 @@ export default function ReturnPage() {
                 disabled={images.length === 0 || !selectedReason}
                 className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-lg py-4 px-12 rounded-xl shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all w-full max-w-md"
               >
-                🤖 Analyze & Find Best Path →
+                <Bot className="w-5 h-5 inline mr-1" /> Analyze & Find Best Path →
               </button>
               {(images.length === 0 || !selectedReason) && (
                 <p className="text-xs text-slc-steel mt-3">Upload photos and select a reason to continue</p>
@@ -372,7 +373,7 @@ export default function ReturnPage() {
               </div>
               <div className="relative z-10">
                 <div className="text-6xl mb-3">
-                  {analysisResult.action === "resell" ? "🏆" : analysisResult.action === "refurbish" ? "🔧" : analysisResult.action === "donate" ? "❤️" : "♻️"}
+                  {analysisResult.action === "resell" ? <RefreshCw className="w-12 h-12 inline text-white" /> : analysisResult.action === "refurbish" ? <RefreshCw className="w-12 h-12 inline text-white" /> : analysisResult.action === "donate" ? <Heart className="w-12 h-12 inline text-white fill-current" /> : <RefreshCw className="w-12 h-12 inline text-white" />}
                 </div>
                 <p className="text-xs font-bold tracking-[0.2em] uppercase text-white/60 mb-2">AI VERDICT</p>
                 <h2 className="text-3xl font-extrabold tracking-tight">
@@ -418,7 +419,7 @@ export default function ReturnPage() {
                   </div>
                 ) : (
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-slc-leaf-light rounded-lg flex items-center justify-center text-xl shrink-0">📦</div>
+                    <div className="w-10 h-10 bg-slc-leaf-light rounded-lg flex items-center justify-center shrink-0"><Package className="w-5 h-5 text-slc-leaf" /></div>
                     <div>
                       <p className="font-bold text-slc-leaf-dark">Stored at Local Hub</p>
                       <p className="text-sm text-slc-steel mt-1">Storing locally saves 340km of transport.</p>
@@ -435,7 +436,7 @@ export default function ReturnPage() {
 
             {/* AI Reasoning */}
             <div className="bg-slc-bark text-white rounded-2xl p-5 shadow-lg">
-              <h4 className="text-xs uppercase tracking-[0.15em] text-white/40 mb-2 font-bold flex items-center gap-2">🤖 AI Analysis</h4>
+              <h4 className="text-xs uppercase tracking-[0.15em] text-white/40 mb-2 font-bold flex items-center gap-2"><Bot className="w-5 h-5 inline mr-1" /> AI Analysis</h4>
               <p className="italic text-white/85 text-sm leading-relaxed">&quot;{analysisResult.reasoning}&quot;</p>
             </div>
 
@@ -452,7 +453,7 @@ export default function ReturnPage() {
 
             {/* Green Impact */}
             <div className="bg-slc-leaf-light border border-slc-leaf/20 rounded-2xl p-5">
-              <h3 className="font-bold text-slc-leaf flex items-center gap-2 mb-3">🌿 Environmental Impact</h3>
+              <h3 className="font-bold text-slc-leaf flex items-center gap-2 mb-3"><Leaf className="w-5 h-5 inline mr-1" /> Environmental Impact</h3>
               <p className="text-sm text-slc-steel">
                 Equivalent to driving <strong>{Math.round(analysisResult.co2_saved_kg * 4)} km less</strong> 🚗 or planting <strong>{Math.round(analysisResult.co2_saved_kg * 0.5)} trees</strong> 🌳
               </p>
@@ -486,7 +487,7 @@ export default function ReturnPage() {
         <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 bg-gradient-to-r from-slc-leaf to-slc-leaf-dark text-white rounded-full px-8 py-3 shadow-2xl font-bold border-2 border-white/50 transition-all duration-700 ease-out z-50 ${
           showToast ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
         }`}>
-          💚 +{analysisResult.green_credits_earned} Green Credits added!
+          <Heart className="w-4 h-4 inline mr-1 fill-current" /> +{analysisResult.green_credits_earned} Green Credits added!
         </div>
       )}
     </div>
