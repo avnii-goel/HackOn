@@ -55,6 +55,7 @@ function ThemeToggle() {
 export default function Navbar() {
   const router = useRouter();
   const [credits, setCredits] = useState<number>(0);
+  const [userName, setUserName] = useState("Shourya");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
@@ -77,6 +78,9 @@ export default function Navbar() {
         if (res.ok) {
           const data = await res.json();
           setCredits(data.credits_balance || 0);
+          if (data.user?.name) {
+            setUserName(data.user.name);
+          }
         }
       } catch (err) {
         console.warn("Could not fetch credits");
@@ -118,7 +122,7 @@ export default function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search SecondLife marketplace..." 
-                className="flex-1 bg-white text-slc-ink px-4 outline-none font-medium text-sm"
+                className="flex-1 bg-slc-surface text-white/70 px-4 outline-none font-medium text-sm placeholder:text-white/70"
               />
               <button type="submit" className="bg-[#febd69] hover:bg-[#f3a847] px-5 transition-colors flex items-center justify-center">
                 <Search className="w-5 h-5 text-[#333333]" />
@@ -129,7 +133,7 @@ export default function Navbar() {
           {/* Right Cluster */}
           <div className="flex items-center gap-2 md:gap-5">
             <Link href="/dashboard" className="hidden md:flex flex-col hover:border-white border border-transparent p-1 rounded-sm cursor-pointer">
-              <span className="text-[11px] text-white/80 leading-tight">Hello, Priya</span>
+              <span className="text-[11px] text-white/80 leading-tight">Hello, {userName.split(" ")[0]}</span>
               <span className="text-sm font-bold text-white leading-tight flex items-center">Account & Lists <span className="ml-1 text-[8px] text-white/60">▼</span></span>
             </Link>
             
@@ -144,8 +148,8 @@ export default function Navbar() {
               <div className="bg-slc-leaf text-white px-2 py-1 rounded text-xs font-bold font-mono border border-slc-leaf-dark shadow-sm flex items-center gap-1">
                 <Heart className="w-3 h-3 fill-current" /> {credits}
               </div>
-              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner border border-white/20 shrink-0">
-                P
+              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner border border-white/20 shrink-0 uppercase">
+                {userName.charAt(0)}
               </div>
             </Link>
           </div>
@@ -164,11 +168,11 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-[60] flex">
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-          <div className="bg-white w-4/5 max-w-sm h-full shadow-2xl relative z-10 flex flex-col animate-in slide-in-from-left duration-300">
+          <div className="bg-slc-surface w-4/5 max-w-sm h-full shadow-2xl relative z-10 flex flex-col animate-in slide-in-from-left duration-300">
             <div className="bg-slc-bark p-6 text-white flex justify-between items-center">
               <div>
-                <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-xl font-bold mb-3 border-2 border-white/20">P</div>
-                <h3 className="font-bold text-xl">Hello, Priya</h3>
+                <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-xl font-bold mb-3 border-2 border-white/20 uppercase">{userName.charAt(0)}</div>
+                <h3 className="font-bold text-xl">Hello, {userName.split(" ")[0]}</h3>
               </div>
               <button onClick={() => setMobileMenuOpen(false)}><X className="w-6 h-6" /></button>
             </div>

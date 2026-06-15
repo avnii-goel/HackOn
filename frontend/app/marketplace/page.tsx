@@ -181,7 +181,7 @@ function MarketplaceContent() {
             ))}
           </div>
         ) : filteredListings.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-xl border border-slc-divider">
+          <div className="text-center py-20 bg-slc-surface rounded-xl border border-slc-divider">
             <Leaf className="w-12 h-12 text-slc-steel mx-auto mb-4" />
             <h3 className="text-xl font-bold text-slc-ink mb-2">No items found</h3>
             <p className="text-slc-steel">Check back later or change your filters.</p>
@@ -222,28 +222,28 @@ function MarketplaceContent() {
       <div className="bg-slc-cloud border-t border-slc-divider py-12 mt-auto">
         <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-slc-leaf"><Bot className="w-6 h-6" /></div>
+            <div className="w-12 h-12 bg-slc-surface rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-slc-leaf"><Bot className="w-6 h-6" /></div>
             <div>
               <h4 className="text-slc-ink font-bold text-sm">AI-Verified</h4>
               <p className="text-slc-steel text-xs font-medium">No fake listings</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-slc-ink"><ShieldCheck className="w-6 h-6" /></div>
+            <div className="w-12 h-12 bg-slc-surface rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-slc-ink"><ShieldCheck className="w-6 h-6" /></div>
             <div>
               <h4 className="text-slc-ink font-bold text-sm">Secure Payment</h4>
               <p className="text-slc-steel text-xs font-medium">Amazon protection</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-amber-500"><Truck className="w-6 h-6" /></div>
+            <div className="w-12 h-12 bg-slc-surface rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-amber-500"><Truck className="w-6 h-6" /></div>
             <div>
               <h4 className="text-slc-ink font-bold text-sm">Fast Delivery</h4>
               <p className="text-slc-steel text-xs font-medium">Local fulfillment</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-blue-500"><Recycle className="w-6 h-6" /></div>
+            <div className="w-12 h-12 bg-slc-surface rounded-full flex items-center justify-center shadow-sm border border-slc-divider shrink-0 text-blue-500"><Recycle className="w-6 h-6" /></div>
             <div>
               <h4 className="text-slc-ink font-bold text-sm">Eco-Friendly</h4>
               <p className="text-slc-steel text-xs font-medium">Zero waste</p>

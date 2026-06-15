@@ -14,6 +14,7 @@
   --color-slc-steel: var(--theme-steel);
   --color-slc-divider: var(--theme-divider);
   --color-slc-red: var(--theme-red);
+  --color-slc-surface: var(--theme-surface);
 }
 
 :root {
@@ -30,6 +31,7 @@
   --theme-steel: #565959;
   --theme-divider: #D5D9D9;
   --theme-red: #B12704;
+  --theme-surface: #FFFFFF;
 }
 
 .dark {
@@ -46,6 +48,7 @@
   --theme-steel: #A0A5A5;
   --theme-divider: #233330;
   --theme-red: #E53935;
+  --theme-surface: #15201D;
 }
 
 body {

@@ -114,7 +114,7 @@ export default function VerifyPage() {
         </div>
 
         {/* SECTION 2: CERTIFICATE CARD */}
-        <div className="bg-white rounded-3xl border-2 border-slc-leaf/20 shadow-xl overflow-hidden mt-6">
+        <div className="bg-slc-surface rounded-3xl border-2 border-slc-leaf/20 shadow-xl overflow-hidden mt-6">
           {/* TOP BAND */}
           <div className="bg-gradient-to-r from-slc-leaf to-slc-leaf-dark py-5 px-7 text-white flex justify-between items-center">
             <div className="flex-1 pr-4">
@@ -127,7 +127,7 @@ export default function VerifyPage() {
               </span>
             </div>
             <div className="flex flex-col items-center flex-shrink-0">
-              <div className="bg-white rounded-full w-20 h-20 flex flex-col items-center justify-center shadow-lg border-4 border-white/10">
+              <div className="bg-slc-surface rounded-full w-20 h-20 flex flex-col items-center justify-center shadow-lg border-4 border-white/10">
                 <span className="text-2xl font-black text-slc-leaf font-mono leading-none">{condition_score}</span>
                 <span className="text-[10px] text-slc-steel font-bold mt-0.5">/ 100</span>
               </div>
@@ -149,7 +149,7 @@ export default function VerifyPage() {
                   )}
                 </div>
                 <p className="text-[11px] text-slc-steel font-mono mt-3 text-center uppercase tracking-wider">
-                  Certificate ID: SLC-{id.substring(0,6)}-{Date.now().toString().slice(-6)}
+                  Certificate ID: SLC-{id.substring(0,6)}-{Array.from(id).reduce((acc, char) => acc + char.charCodeAt(0), 0).toString().padStart(6, '0')}
                 </p>
               </div>
 
@@ -257,7 +257,7 @@ export default function VerifyPage() {
         </div>
 
         {/* SECTION 3: PRICE + CTA */}
-        <div className="bg-white rounded-3xl border border-slc-divider shadow-md p-6 mt-6">
+        <div className="bg-slc-surface rounded-3xl border border-slc-divider shadow-md p-6 mt-6">
           <div className="text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <p className="text-[10px] font-bold text-slc-steel uppercase tracking-widest mb-1">
@@ -282,7 +282,7 @@ export default function VerifyPage() {
               </button>
               <button
                 onClick={handleShare}
-                className="border-2 border-slc-divider hover:border-slc-leaf/50 text-slc-ink bg-white py-3 rounded-xl w-full text-sm font-bold shadow-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                className="border-2 border-slc-divider hover:border-slc-leaf/50 text-slc-ink bg-slc-surface py-3 rounded-xl w-full text-sm font-bold shadow-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 <span>↗</span> Share Certificate
               </button>

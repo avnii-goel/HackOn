@@ -99,20 +99,51 @@ def analyze_product_image(image_base64: str, return_reason: str, product_name: s
         raise Exception(f"Failed to analyze product image: {str(e)}")
 
 
-def get_return_risk(product_name: str, category: str, return_rate: int, common_reasons: list) -> dict:
+def get_return_risk(
+    product_name: str,
+    category: str,
+    return_rate: int,
+    common_reasons: list,
+    user_past_returns: list = None,   # NEW param
+    user_profile: dict = None         # NEW param
+) -> dict:
     try:
-        system_prompt = "You are a return risk analyzer. Return only valid JSON, no other text."
+        system_prompt = (
+            "You are an Amazon AI conversion optimization agent specializing in "
+            "return prevention. Your job is to protect the customer from making "
+            "a purchase they will regret, and redirect them to a better option. "
+            "Return only valid JSON, no other text."
+        )
+
+        user_context = ""
+        if user_past_returns and len(user_past_returns) > 0:
+            user_context = (
+                f"This specific customer has previously returned: {user_past_returns}. "
+                "Use this to make your warning deeply personal — reference their actual history."
+            )
+        else:
+            user_context = (
+                "No specific return history available for this customer. "
+                "Give general but compelling advice based on product patterns."
+            )
 
         user_prompt = (
-            f"Product: {product_name}, Category: {category}, "
-            f"Historical return rate: {return_rate}%, "
-            f"Common return reasons: {common_reasons}. "
+            f"Product: {product_name}\n"
+            f"Category: {category}\n"
+            f"Historical return rate: {return_rate}%\n"
+            f"Most common return reasons: {common_reasons}\n"
+            f"Customer context: {user_context}\n\n"
+            "Based on this data, generate a personalised pre-purchase intercept.\n\n"
             "Return ONLY this JSON:\n"
             "{\n"
-            "  \"risk_score\": <int 0-100>,\n"
-            "  \"primary_reason\": <string>,\n"
-            "  \"suggestion\": <string, buying tip>,\n"
-            "  \"prevention_tip\": <string, one actionable sentence>\n"
+            "  \"risk_score\": <int 0-100, based on return_rate and pattern severity>,\n"
+            "  \"risk_level\": <\"low\" if risk_score<30, \"medium\" if 30-60, \"high\" if >60>,\n"
+            "  \"primary_reason\": <the single most likely reason THIS customer will return>,\n"
+            "  \"personalised_warning\": <1 sentence, direct and specific. If user has return history, reference it explicitly. E.g. 'You previously returned Nike shoes for being too tight — this model also runs small.'. If no history: 'Based on buyer patterns, this item frequently disappoints on {primary_reason}.' Max 20 words.>,\n"
+            "  \"size_recommendation\": <ONLY for clothing/footwear: recommended size adjustment like 'Order one size up'. Empty string for other categories.>,\n"
+            "  \"prevention_tip\": <one sharp actionable sentence, different from personalised_warning>,\n"
+            "  \"intercept_headline\": <5-8 word punchy headline for the banner. E.g. 'This shoe runs small — here is your fix.' or 'High return risk detected for your profile.'>,\n"
+            "  \"suggested_action\": <\"buy_refurb\" if refurb would solve the problem, \"check_size\" if sizing issue, \"read_reviews\" if expectation mismatch, \"proceed\" if low risk>\n"
             "}"
         )
 
@@ -123,7 +154,7 @@ def get_return_risk(product_name: str, category: str, return_rate: int, common_r
                 {"role": "user", "content": user_prompt},
             ],
             temperature=0.3,
-            max_tokens=256,
+            max_tokens=400,
         )
 
         content = response.choices[0].message.content.strip()
@@ -134,14 +165,24 @@ def get_return_risk(product_name: str, category: str, return_rate: int, common_r
             content = content.split("```")[1].split("```")[0].strip()
 
         result = json.loads(content)
+
+        # Ensure risk_level is always present and consistent
+        score = result.get("risk_score", return_rate)
+        if "risk_level" not in result:
+            result["risk_level"] = "high" if score > 60 else "medium" if score > 30 else "low"
+
         return result
 
     except (json.JSONDecodeError, IndexError, KeyError):
         return {
             "risk_score": return_rate,
-            "primary_reason": common_reasons[0] if common_reasons else "Unknown",
-            "suggestion": "Check size guide",
-            "prevention_tip": "Read reviews carefully",
+            "risk_level": "high" if return_rate > 25 else "medium" if return_rate > 10 else "low",
+            "primary_reason": common_reasons[0] if common_reasons else "Unmet expectations",
+            "personalised_warning": f"{return_rate}% of buyers return this item — read the reviews carefully before purchasing.",
+            "size_recommendation": "Consider ordering one size up." if category == "clothing" else "",
+            "prevention_tip": "Check the size guide and recent reviews before adding to cart.",
+            "intercept_headline": "High return risk detected for this product.",
+            "suggested_action": "check_size" if category == "clothing" else "read_reviews",
         }
     except Exception as e:
         raise Exception(f"Failed to get return risk: {str(e)}")

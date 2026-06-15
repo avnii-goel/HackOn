@@ -55,7 +55,7 @@ export default function SellPage() {
       setLoadingMsg((prev) => (prev + 1) % loadingMessages.length);
     }, 1800);
     return () => clearInterval(interval);
-  }, [step]);
+  }, [step, loadingMessages.length]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -203,7 +203,7 @@ export default function SellPage() {
 
       <div className="max-w-3xl mx-auto px-4 -mt-6 relative z-10">
         {/* Step indicator */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slc-divider/50 p-5 mb-8">
+        <div className="bg-slc-surface rounded-2xl shadow-lg border border-slc-divider/50 p-5 mb-8">
           <div className="flex items-center justify-between max-w-sm mx-auto">
             {[
               { num: 1, label: "Item Details" },
@@ -247,7 +247,7 @@ export default function SellPage() {
         {step === 1 && (
           <div className="space-y-6 animate-in fade-in duration-500">
             {/* Photo Upload — Hero Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slc-divider/50 overflow-hidden">
+            <div className="bg-slc-surface rounded-2xl shadow-sm border border-slc-divider/50 overflow-hidden">
               <div className="bg-gradient-to-r from-slc-leaf/5 to-slc-amber/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
                   <span className="w-8 h-8 bg-slc-leaf/10 rounded-lg flex items-center justify-center">
@@ -264,7 +264,7 @@ export default function SellPage() {
                   className={`border-2 border-dashed rounded-2xl h-52 relative overflow-hidden flex items-center justify-center cursor-pointer transition-all duration-300 ${
                     previewUrls.length > 0
                       ? "border-slc-leaf/40 bg-slc-leaf/5"
-                      : "border-slc-divider hover:border-slc-leaf/60 hover:bg-slc-leaf/5 bg-white"
+                      : "border-slc-divider hover:border-slc-leaf/60 hover:bg-slc-leaf/5 bg-slc-surface"
                   }`}
                 >
                   <input
@@ -335,7 +335,7 @@ export default function SellPage() {
             </div>
 
             {/* Product Details Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slc-divider/50 overflow-hidden">
+            <div className="bg-slc-surface rounded-2xl shadow-sm border border-slc-divider/50 overflow-hidden">
               <div className="bg-gradient-to-r from-slc-leaf/5 to-slc-amber/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
                   <span className="w-8 h-8 bg-slc-amber/10 rounded-lg flex items-center justify-center">
@@ -372,7 +372,7 @@ export default function SellPage() {
                         className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold border transition-all ${
                           category === cat.label
                             ? "bg-slc-leaf text-white border-slc-leaf shadow-sm shadow-slc-leaf/20 scale-[1.02]"
-                            : "bg-white text-slc-ink border-slc-divider hover:border-slc-leaf/50 hover:bg-slc-leaf/5"
+                            : "bg-slc-surface text-slc-ink border-slc-divider hover:border-slc-leaf/50 hover:bg-slc-leaf/5"
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -398,7 +398,7 @@ export default function SellPage() {
                           className={`px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all ${
                             yearsOwned === opt
                               ? "bg-slc-leaf text-white border-slc-leaf shadow-sm"
-                              : "bg-white text-slc-ink border-slc-divider hover:border-slc-leaf/50"
+                              : "bg-slc-surface text-slc-ink border-slc-divider hover:border-slc-leaf/50"
                           }`}
                         >
                           {opt}
@@ -419,7 +419,7 @@ export default function SellPage() {
                       className={`py-3.5 rounded-xl font-bold border transition-all flex items-center justify-center gap-2 ${
                         isFunctional === true
                           ? "bg-slc-leaf text-white border-slc-leaf shadow-md shadow-slc-leaf/20"
-                          : "bg-white text-slc-ink border-slc-divider hover:border-slc-leaf/50"
+                          : "bg-slc-surface text-slc-ink border-slc-divider hover:border-slc-leaf/50"
                       }`}
                     >
                       <CheckCircle className="w-5 h-5" /> Yes, works perfectly
@@ -429,7 +429,7 @@ export default function SellPage() {
                       className={`py-3.5 rounded-xl font-bold border transition-all flex items-center justify-center gap-2 ${
                         isFunctional === false
                           ? "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20"
-                          : "bg-white text-slc-ink border-slc-divider hover:border-amber-300"
+                          : "bg-slc-surface text-slc-ink border-slc-divider hover:border-amber-300"
                       }`}
                     >
                       <AlertCircle className="w-5 h-5" /> Has some issues
@@ -458,7 +458,7 @@ export default function SellPage() {
             </div>
 
             {/* Analyze CTA */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slc-divider/50 p-6 text-center">
+            <div className="bg-slc-surface rounded-2xl shadow-sm border border-slc-divider/50 p-6 text-center">
               <button
                 onClick={handleAnalyze}
                 disabled={!canAnalyze}
@@ -483,7 +483,7 @@ export default function SellPage() {
         {/* ═══ STEP 2 — Analyzing ═══ */}
         {step === 2 && (
           <div className="min-h-[55vh] flex flex-col items-center justify-center animate-in zoom-in-95 duration-500">
-            <div className="bg-white rounded-3xl shadow-xl border border-slc-divider/50 p-10 text-center max-w-md w-full">
+            <div className="bg-slc-surface rounded-3xl shadow-xl border border-slc-divider/50 p-10 text-center max-w-md w-full">
               {/* Scanner */}
               <div className="w-36 h-36 mx-auto border-4 border-slc-divider rounded-full relative flex items-center justify-center bg-slc-cloud/50 mb-6">
                 {previewUrls[0] && (
@@ -594,7 +594,7 @@ export default function SellPage() {
 
             {/* Stats Row */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
+              <div className="bg-slc-surface rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
                 <p className="text-3xl font-extrabold text-slc-leaf font-mono leading-none">
                   {result.condition_score}
                 </p>
@@ -602,7 +602,7 @@ export default function SellPage() {
                   Condition
                 </p>
               </div>
-              <div className="bg-white rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
+              <div className="bg-slc-surface rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
                 <p className="text-3xl font-extrabold text-slc-amber font-mono leading-none">
                   +{result.green_credits_earned}
                 </p>
@@ -610,7 +610,7 @@ export default function SellPage() {
                   Credits
                 </p>
               </div>
-              <div className="bg-white rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
+              <div className="bg-slc-surface rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
                 <p className="text-3xl font-extrabold text-sky-600 font-mono leading-none">
                   {result.co2_saved_kg}
                 </p>
@@ -638,7 +638,7 @@ export default function SellPage() {
             )}
 
             {/* Product Card */}
-            <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
+            <div className="bg-slc-surface rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
               <div className="bg-slc-leaf/5 px-5 py-3 border-b border-slc-divider/30">
                 <h3 className="font-bold text-slc-ink mb-3 flex items-center gap-2">
                   <Bot className="w-5 h-5 text-slc-amber" /> AI Analysis
@@ -688,7 +688,7 @@ export default function SellPage() {
 
             {/* Action Section */}
             {!listed ? (
-              <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm p-6 space-y-4">
+              <div className="bg-slc-surface rounded-2xl border border-slc-divider/50 shadow-sm p-6 space-y-4">
                 {result.action === "resell" && (
                   <div className="bg-slc-leaf/5 border border-slc-leaf/20 rounded-xl p-4 flex items-start gap-3">
                     <span className="text-2xl">🎉</span>
@@ -747,7 +747,7 @@ export default function SellPage() {
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={() => router.push("/marketplace")}
-                    className="flex-1 bg-white text-slc-leaf font-bold py-3 rounded-xl text-sm hover:bg-white/90 transition-colors"
+                    className="flex-1 bg-slc-surface text-slc-leaf font-bold py-3 rounded-xl text-sm hover:bg-white/90 transition-colors"
                   >
                     View Marketplace
                   </button>

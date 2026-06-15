@@ -68,8 +68,6 @@ export default function ProductCard({
 
   return (
     <div className="bg-white rounded-xl border border-slc-divider overflow-hidden hover:shadow-lg transition-all cursor-pointer group flex flex-col relative h-full">
-      {/* Left Hover Border */}
-      <div className="absolute left-0 top-0 bottom-0 w-1 bg-slc-leaf opacity-0 group-hover:opacity-100 transition-opacity z-10" />
 
       {/* Image Section */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-slc-smoke">

@@ -174,10 +174,7 @@ export default function LandingPage() {
         
         {/* Left — Copy */}
         <div>
-          {/* Eyebrow */}
-          <div className="animate-fade-in-up stagger-1 inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
-            <span className="text-slc-amber text-xs font-bold tracking-widest uppercase">🏆 Amazon Hackathon 6.0</span>
-          </div>
+
 
           <h1 className="animate-fade-in-up stagger-2 text-5xl md:text-6xl font-extrabold text-white leading-[1.1] tracking-tight mb-4">
             Returns don&apos;t<br />
@@ -233,7 +230,7 @@ export default function LandingPage() {
     </section>
 
     {/* ══ HOW IT WORKS ══════════════════════════════════ */}
-    <section className="bg-white py-20 relative overflow-hidden">
+    <section className="bg-slc-surface py-20 relative overflow-hidden">
       {/* Top edge fade from hero */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#0a1210]/8 to-transparent pointer-events-none" />
       
@@ -277,7 +274,7 @@ export default function LandingPage() {
             }
           ].map((step, i) => (
             <div key={step.num}
-              className={`card-3d relative bg-white rounded-2xl border ${step.color} p-7 shadow-sm`}
+              className={`card-3d relative bg-slc-surface rounded-2xl border ${step.color} p-7 shadow-sm`}
             >
               <div className="flex items-start gap-4 mb-4">
                 <div className={`w-12 h-12 rounded-xl ${step.iconBg} flex items-center justify-center text-xl font-bold shadow-sm shrink-0`}>
@@ -346,7 +343,7 @@ export default function LandingPage() {
             }
           ].map((story) => (
             <div key={story.name}
-              className={`card-3d-subtle bg-white rounded-2xl border border-slc-divider overflow-hidden shadow-sm transition-all`}
+              className={`card-3d-subtle bg-slc-surface rounded-2xl border border-slc-divider overflow-hidden shadow-sm transition-all`}
             >
               <div className={`${story.accentBg} ${story.accentBorder} p-6`}>
                 <div className="flex items-center gap-3 mb-4">
@@ -373,7 +370,7 @@ export default function LandingPage() {
     </section>
 
     {/* ══ PRODUCT CATALOG ═══════════════════════════════ */}
-    <section className="bg-[#F0F2F2] py-16">
+    <section className="bg-slc-cloud py-16">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         
         {/* Header */}
@@ -393,7 +390,7 @@ export default function LandingPage() {
                 className={`px-5 py-2 rounded-full text-sm font-semibold tracking-wide transition-all ${
                   activeCategory === cat
                     ? 'bg-slc-leaf text-white shadow-md shadow-slc-leaf/20 scale-105'
-                    : 'bg-white border border-slc-divider text-slc-steel hover:border-slc-leaf hover:text-slc-leaf'
+                    : 'bg-slc-surface border border-slc-divider text-slc-steel hover:border-slc-leaf hover:text-slc-leaf'
                 }`}
               >
                 {cat === 'All' ? 'All' : capitalizeCategory(cat)}
@@ -406,7 +403,7 @@ export default function LandingPage() {
         {loading && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-2xl overflow-hidden border border-slc-divider">
+              <div key={i} className="bg-slc-surface rounded-2xl overflow-hidden border border-slc-divider">
                 <div className="aspect-[4/3] bg-slc-smoke animate-pulse" />
                 <div className="p-5 space-y-3">
                   <div className="h-4 bg-slc-smoke animate-pulse rounded w-1/3" />
@@ -456,7 +453,7 @@ export default function LandingPage() {
 
         {/* Empty state */}
         {!loading && filteredProducts.length === 0 && (
-          <div className="text-center py-20 bg-white rounded-2xl border border-slc-divider">
+          <div className="text-center py-20 bg-slc-surface rounded-2xl border border-slc-divider">
             <Search className="w-12 h-12 text-slc-steel mx-auto mb-4" />
             <h3 className="text-xl font-bold">No products in this category</h3>
             <p className="text-slc-steel mt-2">Try a different filter.</p>
@@ -465,70 +462,8 @@ export default function LandingPage() {
       </div>
     </section>
 
-    {/* ══ SELLER CTA SECTION ══════════════════════════════ */}
-    <section className="bg-slc-bark py-16 px-4 md:px-8 relative overflow-hidden">
-      {/* Background orb */}
-      <div className="absolute right-0 top-0 w-96 h-96 bg-slc-leaf/10 rounded-full blur-3xl pointer-events-none" />
-      
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          
-          {/* Left */}
-          <div>
-            <span className="bg-slc-amber/20 text-slc-amber text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
-              For Sellers
-            </span>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white mt-4 leading-tight">
-              200 returns a month.<br />
-              <span className="text-gradient">Zero manual work.</span>
-            </h2>
-            <p className="text-white/60 text-base mt-4 leading-relaxed max-w-md">
-              SecondLife AI bulk-grades your entire return queue in seconds. 
-              Auto-prices. Auto-lists. You just watch the recovery numbers climb.
-            </p>
-            <div className="flex flex-col gap-3 mt-6 max-w-xs">
-              {[
-                "✓  AI grades every return automatically",
-                "✓  Personalised insights for your store type",
-                "✓  ₹1.4L recovered by one seller last month",
-              ].map(point => (
-                <p key={point} className="text-white/80 text-sm font-medium">{point}</p>
-              ))}
-            </div>
-            <button
-              onClick={() => router.push('/seller')}
-              className="mt-8 bg-slc-amber hover:bg-yellow-500 text-slc-ink font-bold px-8 py-4 rounded-xl text-base transition-colors glow-amber"
-            >
-              Open Seller Intelligence Hub →
-            </button>
-          </div>
-
-          {/* Right — mini stat preview */}
-          <div className="glass rounded-3xl p-6 space-y-4">
-            <p className="text-white/50 text-xs uppercase tracking-widest font-bold mb-4">
-              This month's seller snapshot
-            </p>
-            {[
-              { label: "Returns auto-graded", val: "212", icon: <Bot className="w-5 h-5 text-slc-leaf" />, color: "text-slc-leaf" },
-              { label: "Value recovered", val: "₹1,41,480", icon: <DollarSign className="w-5 h-5 text-slc-amber" />, color: "text-slc-amber" },
-              { label: "Manual inspections done", val: "0", icon: <CheckCircle className="w-5 h-5 text-white" />, color: "text-white" },
-              { label: "CO₂ prevented", val: "18.4 kg", icon: <Leaf className="w-5 h-5 text-emerald-400" />, color: "text-emerald-400" },
-            ].map(stat => (
-              <div key={stat.label} className="flex items-center justify-between py-3 border-b border-white/10 last:border-0">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-6 h-6">{stat.icon}</div>
-                  <span className="text-white/70 text-sm font-medium">{stat.label}</span>
-                </div>
-                <span className={`font-black font-mono text-lg ${stat.color}`}>{stat.val}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-
     {/* ══ GRADING SECTION ═══════════════════════════════ */}
-    <section className="bg-white py-20 relative overflow-hidden">
+    <section className="bg-slc-surface py-20 relative overflow-hidden">
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
           backgroundImage: 'radial-gradient(circle, #067D62 1px, transparent 1px)',
@@ -559,7 +494,7 @@ export default function LandingPage() {
               { icon: <Leaf className="w-6 h-6 text-blue-600" />, bg: 'bg-blue-50', iconC: 'text-blue-600', title: 'Pre-Loved', body: 'Minor cosmetic wear, fully functional. Most sustainable choice for your wallet.' },
             ].map((grade) => (
               <div key={grade.title}
-                className="card-3d-subtle flex items-start gap-4 bg-[#F0F2F2] rounded-2xl p-5 border border-slc-divider hover:border-slc-leaf/30 transition-colors"
+                className="card-3d-subtle flex items-start gap-4 bg-slc-cloud rounded-2xl p-5 border border-slc-divider hover:border-slc-leaf/30 transition-colors"
               >
                 <div className={`w-11 h-11 rounded-xl ${grade.bg} flex items-center justify-center shrink-0 shadow-sm`}>
                   {grade.icon}

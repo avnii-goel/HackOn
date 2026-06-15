@@ -126,7 +126,7 @@ export default function DashboardPage() {
         </div>
         <div className="max-w-5xl mx-auto px-4 -mt-8">
           <div className="grid grid-cols-4 gap-4">
-            {[1,2,3,4].map(i => <div key={i} className="h-28 bg-white rounded-2xl animate-pulse border border-slc-divider/50" />)}
+            {[1,2,3,4].map(i => <div key={i} className="h-28 bg-slc-surface rounded-2xl animate-pulse border border-slc-divider/50" />)}
           </div>
         </div>
       </div>
@@ -150,7 +150,8 @@ export default function DashboardPage() {
   const credits = wallet.credits_balance || 0;
   const rank = wallet.leaderboard_rank || 0;
   const transactions = wallet.transaction_history || [];
-  const userName = wallet.user?.name || "Shourya";
+  const fullName = wallet.user?.name || "Shourya Agrawal";
+  const userName = fullName.split(" ")[0];
 
   // Level system
   let level = "Seed";
@@ -194,19 +195,19 @@ export default function DashboardPage() {
       <div className="max-w-5xl mx-auto px-4 -mt-8 relative z-10">
         {/* Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-          <div className="bg-white rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
+          <div className="bg-slc-surface rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
             <p className="text-3xl font-extrabold text-slc-leaf font-mono leading-none">{animCredits}</p>
             <p className="text-[10px] font-bold text-slc-steel uppercase mt-2 tracking-wider">Green Credits</p>
           </div>
-          <div className="bg-white rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
+          <div className="bg-slc-surface rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
             <p className="text-3xl font-extrabold text-sky-600 font-mono leading-none">{co2}</p>
             <p className="text-[10px] font-bold text-slc-steel uppercase mt-2 tracking-wider">kg CO₂ Saved</p>
           </div>
-          <div className="bg-white rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
+          <div className="bg-slc-surface rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
             <p className="text-3xl font-extrabold text-amber-500 font-mono leading-none">#{rank}</p>
             <p className="text-[10px] font-bold text-slc-steel uppercase mt-2 tracking-wider">Leaderboard</p>
           </div>
-          <div className="bg-white rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
+          <div className="bg-slc-surface rounded-2xl p-5 border border-slc-divider/50 shadow-sm text-center">
             <p className="text-3xl font-extrabold text-purple-600 font-mono leading-none">{transactions.length}</p>
             <p className="text-[10px] font-bold text-slc-steel uppercase mt-2 tracking-wider">Total Actions</p>
           </div>
@@ -216,7 +217,7 @@ export default function DashboardPage() {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* CO₂ Impact Visualization */}
-            <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
+            <div className="bg-slc-surface rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-slc-leaf/5 to-sky-500/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
                   <Leaf className="w-5 h-5 text-slc-leaf" />
@@ -262,7 +263,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Transaction History */}
-            <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
+            <div className="bg-slc-surface rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-amber-500/5 to-slc-leaf/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
                   <Zap className="w-5 h-5 text-amber-500" />
@@ -325,7 +326,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Leaderboard */}
-            <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
+            <div className="bg-slc-surface rounded-2xl border border-slc-divider/50 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-amber-500/5 to-orange-500/5 px-5 py-3 border-b border-slc-divider/30">
                 <h3 className="font-bold text-slc-ink flex items-center gap-2">
                   <Trophy className="w-4 h-4 text-amber-500" /> Green Champions
@@ -360,21 +361,21 @@ export default function DashboardPage() {
 
             {/* Quick Actions */}
             <div className="space-y-3">
-              <button onClick={() => router.push('/sell')} className="w-full bg-white border border-slc-divider hover:border-slc-leaf/30 rounded-2xl p-5 flex items-center gap-4 transition-all hover:shadow-md card-3d-subtle">
+              <button onClick={() => router.push('/sell')} className="w-full bg-slc-surface border border-slc-divider hover:border-slc-leaf/30 rounded-2xl p-5 flex items-center gap-4 transition-all hover:shadow-md card-3d-subtle">
                 <span className="w-9 h-9 bg-slc-leaf/10 text-slc-leaf rounded-xl flex items-center justify-center"><Camera className="w-5 h-5" /></span>
                 <div className="text-left">
                   <h4 className="font-bold text-slc-ink text-sm">Sell an Item</h4>
                   <p className="text-xs text-slc-steel mt-0.5">Earn credits via AI grading</p>
                 </div>
               </button>
-              <button onClick={() => router.push('/marketplace')} className="w-full bg-white border border-slc-divider hover:border-slc-leaf/30 rounded-2xl p-5 flex items-center gap-4 transition-all hover:shadow-md card-3d-subtle">
+              <button onClick={() => router.push('/marketplace')} className="w-full bg-slc-surface border border-slc-divider hover:border-slc-leaf/30 rounded-2xl p-5 flex items-center gap-4 transition-all hover:shadow-md card-3d-subtle">
                 <span className="w-9 h-9 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center"><ShoppingBag className="w-5 h-5" /></span>
                 <div className="text-left">
                   <h4 className="font-bold text-slc-ink text-sm">Shop Pre-Loved</h4>
                   <p className="text-xs text-slc-steel mt-0.5">Spend credits on discounts</p>
                 </div>
               </button>
-              <button onClick={() => router.push('/return/49a5bb33-491a-40fd-8bf8-3c7ae1742ba8')} className="w-full bg-white border border-slc-divider hover:border-slc-leaf/30 rounded-2xl p-5 flex items-center gap-4 transition-all hover:shadow-md card-3d-subtle">
+              <button onClick={() => router.push('/return/49a5bb33-491a-40fd-8bf8-3c7ae1742ba8')} className="w-full bg-slc-surface border border-slc-divider hover:border-slc-leaf/30 rounded-2xl p-5 flex items-center gap-4 transition-all hover:shadow-md card-3d-subtle">
                 <span className="w-9 h-9 bg-sky-500/10 text-sky-500 rounded-xl flex items-center justify-center"><RefreshCw className="w-5 h-5" /></span>
                 <div className="text-left">
                   <h4 className="font-bold text-slc-ink text-sm">Return a Purchase</h4>

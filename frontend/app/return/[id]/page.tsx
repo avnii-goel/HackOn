@@ -56,7 +56,7 @@ export default function ReturnPage() {
       setLoadingMsg((prev) => (prev + 1) % loadingMessages.length);
     }, 1800);
     return () => clearInterval(interval);
-  }, [currentStep]);
+  }, [currentStep, loadingMessages.length]);
 
   useEffect(() => {
     if (!id) return;
@@ -192,7 +192,7 @@ export default function ReturnPage() {
 
       <div className="max-w-3xl mx-auto px-4 -mt-6 relative z-10">
         {/* Step Indicator */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slc-divider/50 p-5 mb-8">
+        <div className="bg-slc-surface rounded-2xl shadow-lg border border-slc-divider/50 p-5 mb-8">
           <div className="flex items-center justify-between max-w-sm mx-auto">
             {[
               { num: 1, label: "Upload Photos" },
@@ -228,7 +228,7 @@ export default function ReturnPage() {
         {currentStep === 1 && (
           <div className="space-y-6 animate-in fade-in duration-500">
             {/* Photo Upload Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slc-divider/50 overflow-hidden">
+            <div className="bg-slc-surface rounded-2xl shadow-sm border border-slc-divider/50 overflow-hidden">
               <div className="bg-gradient-to-r from-amber-500/5 to-orange-500/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
                   <span className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center"><Camera className="w-4 h-4 text-amber-500" /></span>
@@ -238,7 +238,7 @@ export default function ReturnPage() {
               </div>
               <div className="p-6">
                 <div className={`border-2 border-dashed rounded-2xl h-52 relative overflow-hidden flex items-center justify-center cursor-pointer transition-all duration-300 ${
-                  previewUrls.length > 0 ? "border-amber-400/40 bg-amber-50/30" : "border-slc-divider hover:border-amber-400/60 hover:bg-amber-50/20 bg-white"
+                  previewUrls.length > 0 ? "border-amber-400/40 bg-amber-50/30" : "border-slc-divider hover:border-amber-400/60 hover:bg-amber-50/20 bg-slc-surface"
                 }`}>
                   <input type="file" accept="image/*" multiple className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={handleImageUpload} disabled={images.length >= 3} />
                   {previewUrls.length === 0 ? (
@@ -278,7 +278,7 @@ export default function ReturnPage() {
             </div>
 
             {/* Return Reason Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slc-divider/50 overflow-hidden">
+            <div className="bg-slc-surface rounded-2xl shadow-sm border border-slc-divider/50 overflow-hidden">
               <div className="bg-gradient-to-r from-amber-500/5 to-orange-500/5 px-6 py-4 border-b border-slc-divider/30">
                 <h2 className="font-bold text-slc-ink flex items-center gap-2 text-lg">
                   <span className="w-8 h-8 bg-orange-500/10 rounded-lg flex items-center justify-center">💬</span>
@@ -294,7 +294,7 @@ export default function ReturnPage() {
                       className={`flex items-center gap-2 px-3 py-3 rounded-xl text-sm font-semibold border transition-all ${
                         selectedReason === reason.label
                           ? "bg-amber-500 text-white border-amber-500 shadow-sm shadow-amber-500/20 scale-[1.02]"
-                          : "bg-white text-slc-ink border-slc-divider hover:border-amber-400/50 hover:bg-amber-50/30"
+                          : "bg-slc-surface text-slc-ink border-slc-divider hover:border-amber-400/50 hover:bg-amber-50/30"
                       }`}
                     >
                       <span>{reason.emoji}</span>
@@ -306,7 +306,7 @@ export default function ReturnPage() {
             </div>
 
             {/* Analyze CTA */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slc-divider/50 p-6 text-center">
+            <div className="bg-slc-surface rounded-2xl shadow-sm border border-slc-divider/50 p-6 text-center">
               <button
                 onClick={handleAnalyze}
                 disabled={images.length === 0 || !selectedReason}
@@ -327,7 +327,7 @@ export default function ReturnPage() {
         {/* ═══ STEP 2 — Analyzing ═══ */}
         {currentStep === 2 && (
           <div className="min-h-[55vh] flex flex-col items-center justify-center animate-in zoom-in-95 duration-500">
-            <div className="bg-white rounded-3xl shadow-xl border border-slc-divider/50 p-10 text-center max-w-md w-full">
+            <div className="bg-slc-surface rounded-3xl shadow-xl border border-slc-divider/50 p-10 text-center max-w-md w-full">
               <div className="w-36 h-36 mx-auto border-4 border-slc-divider rounded-full relative flex items-center justify-center bg-slc-cloud/50 mb-6">
                 {previewUrls[0] && (
                   <div className="w-full h-full rounded-full overflow-hidden relative">
@@ -390,15 +390,15 @@ export default function ReturnPage() {
 
             {/* Stats Row */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
+              <div className="bg-slc-surface rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
                 <p className="text-3xl font-extrabold text-slc-leaf font-mono leading-none">{analysisResult.condition_score}</p>
                 <p className="text-[10px] font-bold text-slc-steel uppercase mt-1.5 tracking-wider">Condition</p>
               </div>
-              <div className="bg-white rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
+              <div className="bg-slc-surface rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
                 <p className="text-3xl font-extrabold text-amber-500 font-mono leading-none">+{analysisResult.green_credits_earned}</p>
                 <p className="text-[10px] font-bold text-slc-steel uppercase mt-1.5 tracking-wider">Credits</p>
               </div>
-              <div className="bg-white rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
+              <div className="bg-slc-surface rounded-2xl p-4 text-center border border-slc-divider/50 shadow-sm">
                 <p className="text-3xl font-extrabold text-sky-600 font-mono leading-none">{analysisResult.co2_saved_kg}</p>
                 <p className="text-[10px] font-bold text-slc-steel uppercase mt-1.5 tracking-wider">kg CO₂</p>
               </div>
@@ -406,7 +406,7 @@ export default function ReturnPage() {
 
             {/* Smart Routing */}
             {(analysisResult.action === "resell" || analysisResult.action === "refurbish") && (
-              <div className="bg-white rounded-2xl border border-slc-divider/50 p-5 shadow-sm">
+              <div className="bg-slc-surface rounded-2xl border border-slc-divider/50 p-5 shadow-sm">
                 <h4 className="font-bold text-slc-ink mb-3 flex items-center gap-2">🏭 Smart Routing Decision</h4>
                 {(analysisResult.estimated_resale_price ?? 0) > 2000 ? (
                   <div className="flex items-start gap-3">
@@ -460,7 +460,7 @@ export default function ReturnPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="bg-white rounded-2xl border border-slc-divider/50 shadow-sm p-6 space-y-4">
+            <div className="bg-slc-surface rounded-2xl border border-slc-divider/50 shadow-sm p-6 space-y-4">
               <button
                 onClick={() => router.push("/marketplace")}
                 className={`text-white font-bold py-4 rounded-xl text-lg w-full shadow-lg hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all ${

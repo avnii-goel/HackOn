@@ -128,7 +128,7 @@ export default function ListingDetailPage() {
   const savingsPct = Math.round((1 - listing.asking_price / originalPrice) * 100);
 
   return (
-    <div className="bg-white min-h-screen pb-24">
+    <div className="bg-slc-surface min-h-screen pb-24">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row gap-10">
         
         {/* LEFT COLUMN: Image & Badges */}
@@ -145,7 +145,7 @@ export default function ListingDetailPage() {
           </div>
           
           <div className="mt-4 flex flex-wrap gap-2">
-            <span className="bg-white border border-slc-divider text-slc-ink px-4 py-2 rounded-full font-bold text-sm shadow-sm">
+            <span className="bg-slc-surface border border-slc-divider text-slc-ink px-4 py-2 rounded-full font-bold text-sm shadow-sm">
               {listing.condition_label}
             </span>
             <span className="bg-slc-cloud text-slc-ink px-4 py-2 rounded-full font-bold text-sm border border-slc-divider flex items-center gap-1.5">

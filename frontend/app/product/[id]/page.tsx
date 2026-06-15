@@ -22,13 +22,19 @@ interface Product {
 }
 
 interface RiskData {
-  product_id: string;
+  product_id?: string;
   return_rate: number;
   risk_level: "low" | "medium" | "high";
   common_reasons: string[];
   refurb_available: boolean;
   refurb_price: number | null;
   prevention_tip: string;
+  // New fields from upgraded Groq prompt
+  risk_score?: number;
+  personalised_warning?: string;
+  size_recommendation?: string;
+  intercept_headline?: string;
+  suggested_action?: "buy_refurb" | "check_size" | "read_reviews" | "proceed";
 }
 
 const fallbackProducts: Product[] = [
@@ -54,6 +60,194 @@ const PLACEHOLDER_IMAGES: Record<string, string> = {
   sports: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800",
 };
 
+// ─── AI Pre-Cart Intercept Banner ───────────────────────────────
+interface InterceptBannerProps {
+  riskData: RiskData;
+  product: Product;
+  onBuyRefurb: () => void;
+}
+
+function AIInterceptBanner({ riskData, product, onBuyRefurb }: InterceptBannerProps) {
+  const router = useRouter();
+  const [expanded, setExpanded] = useState(false);
+
+  // Don't show banner for low risk items
+  if (riskData.risk_level === "low" && (riskData.risk_score || riskData.return_rate) < 20) {
+    return (
+      <div className="flex items-center gap-2.5 bg-slc-leaf-light border border-slc-leaf/30 rounded-xl px-4 py-3 mb-5">
+        <span className="text-lg">✅</span>
+        <div>
+          <p className="text-slc-leaf font-bold text-sm">Low return risk for your profile</p>
+          <p className="text-slc-steel text-xs mt-0.5">This item has a strong match with your purchase history.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isHigh = riskData.risk_level === "high" || (riskData.risk_score || riskData.return_rate) > 25;
+  const isMedium = riskData.risk_level === "medium";
+
+  const bannerConfig = {
+    high: {
+      bg: "bg-red-50",
+      border: "border-red-300",
+      iconBg: "bg-red-100",
+      icon: "🚨",
+      titleColor: "text-red-800",
+      bodyColor: "text-red-700/80",
+      pillBg: "bg-red-100 text-red-700",
+    },
+    medium: {
+      bg: "bg-amber-50",
+      border: "border-amber-300",
+      iconBg: "bg-amber-100",
+      icon: "⚠️",
+      titleColor: "text-amber-900",
+      bodyColor: "text-amber-800/80",
+      pillBg: "bg-amber-100 text-amber-800",
+    },
+    low: {
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      iconBg: "bg-amber-50",
+      icon: "⚠️",
+      titleColor: "text-amber-800",
+      bodyColor: "text-amber-700/80",
+      pillBg: "bg-amber-100 text-amber-700",
+    },
+  };
+
+  const cfg = bannerConfig[riskData.risk_level] || bannerConfig.medium;
+
+  return (
+    <div className={`${cfg.bg} border ${cfg.border} rounded-2xl overflow-hidden mb-5 shadow-sm`}>
+      
+      {/* Top strip — AI label */}
+      <div className="bg-slc-bark/90 px-4 py-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-slc-leaf text-xs font-black uppercase tracking-widest">🤖 AI Return Prevention</span>
+        </div>
+        <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${cfg.pillBg}`}>
+          {riskData.risk_score || riskData.return_rate}% return risk
+        </span>
+      </div>
+
+      {/* Main content */}
+      <div className="p-4">
+        {/* Headline */}
+        <p className={`font-extrabold text-base ${cfg.titleColor} mb-1`}>
+          {cfg.icon} {riskData.intercept_headline || `${riskData.return_rate}% of buyers return this item`}
+        </p>
+
+        {/* Personalised warning */}
+        <p className={`text-sm ${cfg.bodyColor} font-medium mb-3 leading-relaxed`}>
+          {riskData.personalised_warning || `Most common reason: ${riskData.common_reasons?.[0] || "Unmet expectations"}`}
+        </p>
+
+        {/* Size recommendation pill — only for clothing */}
+        {riskData.size_recommendation && riskData.size_recommendation.trim() !== "" && (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="bg-slc-ink text-white text-xs font-bold px-3 py-1.5 rounded-full">
+              📏 {riskData.size_recommendation}
+            </span>
+          </div>
+        )}
+
+        {/* Expandable prevention tip */}
+        {riskData.prevention_tip && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-slc-leaf text-xs font-bold flex items-center gap-1 mb-3 hover:underline"
+          >
+            💡 {expanded ? "Hide tip" : "See buying tip"}
+            <span className="text-slc-leaf">{expanded ? "▲" : "▼"}</span>
+          </button>
+        )}
+        {expanded && riskData.prevention_tip && (
+          <div className="bg-white/70 rounded-xl px-4 py-3 mb-3 border border-slc-leaf/20">
+            <p className="text-sm text-slc-steel leading-relaxed">{riskData.prevention_tip}</p>
+          </div>
+        )}
+
+        {/* ── THE CROSS-SELL — The Killer Feature ── */}
+        {riskData.refurb_available && riskData.refurb_price && (
+          <div className="bg-white rounded-xl border border-slc-leaf/30 p-4 mt-2 shadow-sm">
+            
+            {/* Cross-sell header */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-slc-leaf text-xs font-black uppercase tracking-widest">
+                💚 SecondLife Alternative
+              </span>
+              <span className="bg-slc-leaf text-white text-[10px] font-bold px-2 py-0.5 rounded-full ml-auto">
+                AVOID THE RETURN
+              </span>
+            </div>
+
+            {/* Product preview row */}
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-14 h-14 rounded-lg overflow-hidden bg-slc-smoke border border-slc-divider shrink-0">
+                <img
+                  src={
+                    product.category === "electronics"
+                      ? "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200"
+                      : product.category === "clothing"
+                      ? "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200"
+                      : "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=200"
+                  }
+                  alt="refurb alternative"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-slc-ink line-clamp-1">
+                  Certified Refurb — {product.name}
+                </p>
+                <p className="text-[10px] text-slc-steel mt-0.5">AI-graded · SecondLife Verified</p>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="text-slc-red font-black text-lg font-mono">
+                    ₹{riskData.refurb_price.toLocaleString("en-IN")}
+                  </span>
+                  <span className="text-slc-steel text-xs line-through">
+                    ₹{product.price.toLocaleString("en-IN")}
+                  </span>
+                  <span className="text-slc-leaf text-[10px] font-bold">
+                    Save {Math.round(((product.price - riskData.refurb_price) / product.price) * 100)}%
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Credits incentive */}
+            <div className="flex items-center gap-2 bg-slc-leaf-light rounded-lg px-3 py-2 mb-3">
+              <span className="text-sm">💚</span>
+              <p className="text-slc-leaf text-xs font-bold">
+                Buy this instead → Earn 150 Green Credits + prevent a wasted return journey
+              </p>
+            </div>
+
+            {/* CTA buttons */}
+            <div className="flex gap-2">
+              <button
+                onClick={onBuyRefurb}
+                className="flex-[2] bg-slc-leaf hover:bg-slc-leaf-dark text-white font-bold py-2.5 rounded-xl text-sm transition-colors"
+              >
+                Buy Refurb — ₹{riskData.refurb_price.toLocaleString("en-IN")} →
+              </button>
+              <button
+                onClick={() => router.push("/marketplace")}
+                className="flex-1 border border-slc-leaf text-slc-leaf font-semibold py-2.5 rounded-xl text-xs hover:bg-slc-leaf-light transition-colors"
+              >
+                Browse More
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+// ─── End AIInterceptBanner ───────────────────────────────────────
+
 export default function ProductPage() {
   const router = useRouter();
   const params = useParams();
@@ -77,7 +271,8 @@ export default function ProductPage() {
             setProduct(found);
             // Fetch risk data for this product
             try {
-              const riskRes = await fetch(`${API_URL}/prevention/risk/${id}`);
+              const userId = localStorage.getItem("slc_user_id") || "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+              const riskRes = await fetch(`${API_URL}/prevention/risk/${id}?user_id=${userId}`);
               if (riskRes.ok) {
                 const data: RiskData = await riskRes.json();
                 setRiskData(data);
@@ -152,7 +347,7 @@ export default function ProductPage() {
     : PLACEHOLDER_IMAGES[product.category] || PLACEHOLDER_IMAGES.electronics;
 
   const reasons = riskData.common_reasons || [];
-  const fakePercentages = [45, 30, 15]; // Mock data for bar chart
+
 
   return (
     <div className="bg-slc-cloud min-h-screen pb-24">
@@ -183,6 +378,8 @@ export default function ProductPage() {
             <p className="text-xs text-slc-steel mt-4 flex items-center gap-1 font-semibold">
               <Search className="w-4 h-4 inline text-slc-steel" /> AI will analyze these photos when you initiate return
             </p>
+
+
           </div>
 
           {/* RIGHT COLUMN: Details */}
@@ -226,85 +423,17 @@ export default function ProductPage() {
               <p className="text-slc-steel text-xs mt-1">Inclusive of all taxes</p>
             </div>
 
-            {/* RETURN RISK BANNER */}
-            {riskData.return_rate > 10 && (
-              <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 mb-5 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-8 h-8 text-slc-amber" />
-                  <div>
-                    <p className="font-bold text-amber-900">{riskData.return_rate}% of buyers return this item</p>
-                    <p className="text-sm text-amber-800/80 font-medium">Most common reason: {reasons[0] || "Doesn't meet expectations"}</p>
-                    {riskData.prevention_tip && (
-                      <p className="text-sm text-slc-leaf font-bold mt-1 flex items-center gap-1.5"><Leaf className="w-4 h-4" /> Tip: {riskData.prevention_tip}</p>
-                    )}
-                  </div>
-                </div>
-                {riskData.refurb_available && (
-                  <button className="text-slc-leaf text-sm underline font-bold mt-2 ml-9">
-                    See Certified Refurb Alternative →
-                  </button>
-                )}
-              </div>
-            )}
 
-            {/* PRODUCT HEALTH CARD */}
-            <div className="bg-slc-leaf-light border border-slc-leaf/30 rounded-xl p-5 mb-5 shadow-sm">
-              <div className="mb-4">
-                <h3 className="font-bold text-slc-leaf flex items-center gap-2">
-                  <span>📋</span> SecondLife Product Health Card
-                </h3>
-                <p className="text-xs text-slc-leaf-dark font-medium">AI-verified before every listing</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="bg-white rounded-lg p-3 text-center border border-slc-divider">
-                  <p className="text-[10px] uppercase font-bold text-slc-steel tracking-wider mb-1">Condition Score</p>
-                  <p className="text-2xl font-bold text-slc-leaf font-mono leading-none">9.2 <span className="text-sm text-slc-steel font-sans">/ 10</span></p>
-                </div>
-                <div className="bg-white rounded-lg p-3 text-center border border-slc-divider">
-                  <p className="text-[10px] uppercase font-bold text-slc-steel tracking-wider mb-1">AI Grade</p>
-                  <p className="text-lg font-bold text-slc-ink leading-none mt-1 flex items-center gap-1">Good <CheckCircle className="w-4 h-4 text-slc-leaf" /></p>
-                </div>
-                <div className="bg-white rounded-lg p-3 text-center border border-slc-divider">
-                  <p className="text-[10px] uppercase font-bold text-slc-steel tracking-wider mb-1">Warranty</p>
-                  <p className="text-sm font-bold text-slc-ink mt-1">6 months left</p>
-                </div>
-                <div className="bg-white rounded-lg p-3 text-center border border-slc-divider">
-                  <p className="text-[10px] uppercase font-bold text-slc-steel tracking-wider mb-1">Return History</p>
-                  <p className="text-sm font-bold text-slc-ink mt-1">First return</p>
-                </div>
-              </div>
 
-              {/* Life Path Indicator */}
-              <div className="life-path justify-between px-2 pt-2 border-t border-slc-leaf/20">
-                <div className="flex flex-col items-center gap-1">
-                  <div className="life-path-dot bg-white border border-slc-leaf/20 rounded-full"><Package className="w-5 h-5 text-slc-steel" /></div>
-                  <span className="text-[9px] font-bold text-slc-leaf-dark uppercase">Return</span>
-                </div>
-                <div className="life-path-line bg-slc-leaf/40" />
-                <div className="flex flex-col items-center gap-1">
-                  <div className="life-path-dot bg-white border border-slc-leaf/20 rounded-full"><Bot className="w-5 h-5 text-slc-amber" /></div>
-                  <span className="text-[9px] font-bold text-slc-leaf-dark uppercase">Grade</span>
-                </div>
-                <div className="life-path-line bg-slc-leaf/40" />
-                <div className="flex flex-col items-center gap-1">
-                  <div className="life-path-dot bg-white border border-slc-leaf/20 rounded-full"><CheckCircle className="w-5 h-5 text-slc-leaf" /></div>
-                  <span className="text-[9px] font-bold text-slc-leaf-dark uppercase">Route</span>
-                </div>
-                <div className="life-path-line bg-slc-leaf/40" />
-                <div className="flex flex-col items-center gap-1">
-                  <div className="life-path-dot bg-slc-leaf text-white rounded-full"><Heart className="w-5 h-5 fill-current" /></div>
-                  <span className="text-[9px] font-bold text-slc-leaf-dark uppercase">Earn</span>
-                </div>
-              </div>
-              
-              <button
-                onClick={() => router.push(`/verify/${product.id}`)}
-                className="w-full bg-white border border-slc-leaf/30 text-slc-leaf text-xs font-bold py-2.5 rounded-lg hover:bg-slc-cloud transition-colors mt-4 shadow-sm flex justify-center items-center gap-2"
-              >
-                <span>↗</span> View Public Certificate
-              </button>
-            </div>
+            {/* AI PRE-CART INTERCEPT BANNER */}
+            <AIInterceptBanner
+              riskData={riskData}
+              product={product}
+              onBuyRefurb={() => {
+                showToast("💚 Refurb added to cart! +150 Green Credits earned");
+                router.push("/marketplace");
+              }}
+            />
 
             {/* ACTION BUTTONS */}
             <div className="flex flex-col gap-3">
@@ -324,7 +453,69 @@ export default function ProductPage() {
         </div>
 
         {/* BELOW THE FOLD */}
-        <div className="mt-12 max-w-3xl">
+        <div className="mt-16 border-t border-slc-divider pt-12 max-w-4xl mx-auto">
+          <h2 className="text-2xl font-bold text-slc-ink mb-6 text-center">About the SecondLife Alternative</h2>
+          
+          {/* PRODUCT HEALTH CARD - Moved below the fold for better UX */}
+          <div className="bg-slc-leaf-light border border-slc-leaf/30 rounded-2xl p-8 shadow-sm">
+            <div className="mb-6 flex flex-col items-center text-center">
+              <h3 className="font-bold text-slc-leaf text-xl flex items-center gap-2">
+                <span>📋</span> SecondLife Product Health Card
+              </h3>
+              <p className="text-sm text-slc-leaf-dark font-medium mt-1">AI-verified before every listing</p>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <div className="bg-slc-surface rounded-xl p-4 text-center border border-slc-divider shadow-sm">
+                <p className="text-[10px] uppercase font-bold text-slc-steel tracking-wider mb-2">Condition Score</p>
+                <p className="text-3xl font-bold text-slc-leaf font-mono leading-none">9.2 <span className="text-sm text-slc-steel font-sans">/ 10</span></p>
+              </div>
+              <div className="bg-slc-surface rounded-xl p-4 text-center border border-slc-divider shadow-sm">
+                <p className="text-[10px] uppercase font-bold text-slc-steel tracking-wider mb-2">AI Grade</p>
+                <p className="text-xl font-bold text-slc-ink leading-none mt-1 flex items-center justify-center gap-1">Good <CheckCircle className="w-5 h-5 text-slc-leaf" /></p>
+              </div>
+              <div className="bg-slc-surface rounded-xl p-4 text-center border border-slc-divider shadow-sm">
+                <p className="text-[10px] uppercase font-bold text-slc-steel tracking-wider mb-2">Warranty</p>
+                <p className="text-base font-bold text-slc-ink mt-2">6 months left</p>
+              </div>
+              <div className="bg-slc-surface rounded-xl p-4 text-center border border-slc-divider shadow-sm">
+                <p className="text-[10px] uppercase font-bold text-slc-steel tracking-wider mb-2">Return History</p>
+                <p className="text-base font-bold text-slc-ink mt-2">First return</p>
+              </div>
+            </div>
+
+            {/* Life Path Indicator */}
+            <div className="life-path justify-between px-4 md:px-12 pt-6 border-t border-slc-leaf/20">
+              <div className="flex flex-col items-center gap-2">
+                <div className="life-path-dot w-10 h-10 bg-slc-surface border border-slc-leaf/20 rounded-full shadow-sm"><Package className="w-5 h-5 text-slc-steel" /></div>
+                <span className="text-[10px] font-bold text-slc-leaf-dark uppercase">Return</span>
+              </div>
+              <div className="life-path-line bg-slc-leaf/40" />
+              <div className="flex flex-col items-center gap-2">
+                <div className="life-path-dot w-10 h-10 bg-slc-surface border border-slc-leaf/20 rounded-full shadow-sm"><Bot className="w-5 h-5 text-slc-amber" /></div>
+                <span className="text-[10px] font-bold text-slc-leaf-dark uppercase">Grade</span>
+              </div>
+              <div className="life-path-line bg-slc-leaf/40" />
+              <div className="flex flex-col items-center gap-2">
+                <div className="life-path-dot w-10 h-10 bg-slc-surface border border-slc-leaf/20 rounded-full shadow-sm"><CheckCircle className="w-5 h-5 text-slc-leaf" /></div>
+                <span className="text-[10px] font-bold text-slc-leaf-dark uppercase">Route</span>
+              </div>
+              <div className="life-path-line bg-slc-leaf/40" />
+              <div className="flex flex-col items-center gap-2">
+                <div className="life-path-dot w-10 h-10 bg-slc-leaf text-white rounded-full shadow-sm"><Heart className="w-5 h-5 fill-current" /></div>
+                <span className="text-[10px] font-bold text-slc-leaf-dark uppercase">Earn</span>
+              </div>
+            </div>
+            
+            <div className="mt-8 text-center">
+              <button
+                onClick={() => router.push(`/verify/${product.id}`)}
+                className="bg-white border border-slc-leaf/30 text-slc-leaf text-sm font-bold px-8 py-3 rounded-full hover:bg-slc-cloud transition-colors shadow-sm inline-flex items-center gap-2"
+              >
+                <span>↗</span> View Public Blockchain Certificate
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>
