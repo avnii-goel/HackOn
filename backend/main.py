@@ -10,7 +10,7 @@ app = FastAPI(title="Second Life Commerce API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://*.vercel.app"],
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "https://secondlife-blue.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
