@@ -1,8 +1,0 @@
-{
-  "version": 2,
-  "name": "secondlife-commerce",
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/.next",
-  "installCommand": "cd frontend && npm install",
-  "framework": "nextjs"
-}
