@@ -111,8 +111,8 @@ function MarketplaceContent() {
     
     // Category filter from URL
     if (cat && cat !== "all departments" && cat !== "all conditions" && cat !== "") {
-      if (cat === "home  kitchen") {
-        result = result.filter(l => l.product?.category?.toLowerCase() === "home");
+      if (cat.includes("home") || cat.includes("kitchen")) {
+        result = result.filter(l => l.product?.category?.toLowerCase() === "home" || l.product?.category?.toLowerCase().includes("home"));
       } else if (cat === "eco picks") {
         result = result; // show all — everything here is sustainable
       } else if (["like new", "good", "fair"].includes(cat)) {

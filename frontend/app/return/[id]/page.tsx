@@ -182,11 +182,6 @@ export default function ReturnPage() {
           <p className="text-white/80 text-lg max-w-md mx-auto">
             Don&apos;t just return — let AI find the best second life for your item.
           </p>
-          {productName !== "Product" && (
-            <div className="mt-4 inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
-              <span className="text-sm font-medium">Returning: <strong>{productName}</strong></span>
-            </div>
-          )}
         </div>
       </div>
 

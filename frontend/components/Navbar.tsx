@@ -12,9 +12,9 @@ function CategoryBar() {
   return (
     <div className="h-9 bg-slc-bark border-t border-white/10 hidden md:flex items-center px-8 gap-6 overflow-x-auto shadow-sm">
       {["All Departments", "Electronics", "Clothing", "Home & Kitchen", "Books", "Sports", "Eco Picks"].map((cat) => {
-        const catSlug = cat.toLowerCase().replace(" ", "-");
+        const catSlug = cat.toLowerCase();
         const isActive = activeCategory.toLowerCase() === catSlug ||
-                         (catSlug === "all-departments" && !activeCategory);
+                         (catSlug === "all departments" && (!activeCategory || activeCategory === "all-departments"));
         return (
           <Link
             key={cat}
