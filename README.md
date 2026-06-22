@@ -62,7 +62,7 @@ journey
 SecondLife Commerce is a fully stateless monorepo built for high performance and horizontal scalability.
 
 <div align="center">
-  <img src="./architecture.png" alt="SecondLife System Architecture Diagram" width="100%" style="background-color: white; padding: 10px; border-radius: 8px;" />
+  <img src="./architecture.png?v=2" alt="SecondLife System Architecture Diagram" width="100%" style="background-color: white; padding: 10px; border-radius: 8px;" />
 </div>
 
 ### Tech Stack Details
